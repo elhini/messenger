@@ -1,0 +1,23 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.App {
+  border: 1px solid #666;
+  width: 600px;
+  height: 500px;
+  display: flex;
+}
+
+.App .divider {
+  width: 5px;
+  background: #eee;
+}
