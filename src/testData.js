@@ -1,7 +1,7 @@
 export default {
     list: [
-        {"id": 1, "user": "Клиент", "lastMessageIsMine": false, "lastMessageText": "Спасибо за оперативность!", "lastMessageDate": "2020-06-16T12:13:00.000Z"},
-        {"id": 2, "user": "Жена", "lastMessageIsMine": true, "lastMessageText": "ок", "lastMessageDate": "2020-06-16T12:00:00.000Z"}
+        {"id": 1, "users": ["Клиент", "elhini"], "lastMessageUser": "Клиент", "lastMessageText": "Спасибо за оперативность!", "lastMessageDate": "2020-06-16T12:13:00.000Z"},
+        {"id": 2, "users": ["Жена", "elhini"], "lastMessageUser": "elhini", "lastMessageText": "ок", "lastMessageDate": "2020-06-16T12:00:00.000Z"}
     ],
     1: [
         {"user": "Клиент", "text": "Доброе утро! У нас опять проблемы с сайтом", "id": 1, "date": "2020-06-16T12:01:00.000Z"},

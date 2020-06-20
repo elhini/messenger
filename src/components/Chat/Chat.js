@@ -4,7 +4,7 @@ import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import './Chat.css'; 
 
-function Chat({ chats, activeChatID, updateChat, messages, setMessages, user }) {
+function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const messageToScrollRef = useRef(null);
@@ -34,7 +34,7 @@ function Chat({ chats, activeChatID, updateChat, messages, setMessages, user }) 
         setMessages({...messages, [activeChatID]: [...messagesByChat, newMessage]});
         setText(''); 
         const chat = chats.find(c => c.id === activeChatID);
-        chat.lastMessageIsMine = true;
+        chat.lastMessageUser = user;
         chat.lastMessageText = text;
         chat.lastMessageDate = newMessage.date;
         updateChat(chat);
@@ -45,7 +45,6 @@ function Chat({ chats, activeChatID, updateChat, messages, setMessages, user }) 
             <ul className="messages">
                 {messagesByChat.map(m => 
                     <li className={'message ' + (m.user === user ? 'own' : '')} key={m.id}>
-                        <span className="user">{m.user}</span>{' '}
                         <span className="date">[{toStr(m.date)}]</span>
                         <br /> 
                         {m.text}
