@@ -1,0 +1,4 @@
+[
+    {"_id": 1, "users": ["Клиент", "elhini"], "lastMessageUser": "Клиент", "lastMessageText": "Спасибо за оперативность!", "lastMessageDate": "2020-06-16T12:13:00.000Z"},
+    {"_id": 2, "users": ["Жена", "elhini"], "lastMessageUser": "elhini", "lastMessageText": "ок", "lastMessageDate": "2020-06-16T12:00:00.000Z"}
+]
