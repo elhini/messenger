@@ -79,7 +79,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         </div>
         <form className="newMessageForm" onSubmit={e => onSend(e, text)}>
             <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} placeholder="Write a message..." />
-            <button disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
+            <button class="newMessageBtn" disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
         </form>
     </div>;
 }

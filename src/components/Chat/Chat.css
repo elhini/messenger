@@ -58,3 +58,7 @@
 .Chat .newMessageInput {
     width: 100%;
 }
+  
+.Chat .newMessageBtn {
+    cursor: pointer;
+}
