@@ -45,6 +45,16 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             socket.off('new-message');
         };
     });
+
+    useEffect(() => {
+        socket.on('del-message', (id) => {
+            var messagesFiltered = messagesByChat.filter(m => m._id !== id);
+            _setMessage(messagesFiltered);
+        });
+        return () => {
+            socket.off('del-message');
+        };
+    });
   
     function onSend(e, text) {
         e.preventDefault();
@@ -73,8 +83,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         setStatus('deleting');
         req('DELETE', 'messages/' + id, null, res => {
             setStatus('');
-            var messagesFiltered = messagesByChat.filter(m => m._id !== id);
-            _setMessage(messagesFiltered);
+            socket.emit('del-message', id);
         });
     }
 

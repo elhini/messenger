@@ -20,10 +20,17 @@ MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) =>
   var io = require('socket.io').listen(server);
   io.on('connection', (socket) => {
     console.log('user connected');
+
     socket.on('new-message', (msg) => {
       console.log('new-message', msg);
       io.emit('new-message', msg);
     });
+
+    socket.on('del-message', (id) => {
+      console.log('del-message', id);
+      io.emit('del-message', id);
+    });
+
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
