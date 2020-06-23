@@ -7,7 +7,7 @@ export function req(method, path, data, callback) {
     })
     .then(res => res.json())
     .then(res => {
-        console.log('res', res);
+        console.log(method, path, ':', res);
         callback(res);
     })
     .catch(err => console.error('err', err));
