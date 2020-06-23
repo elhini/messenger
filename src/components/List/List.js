@@ -7,10 +7,11 @@ import './List.css';
 
 function List({ user, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');
-    const filteredChats = search ? chats.filter(c => {
+    const chatsByUser = chats.filter(c => c.users.includes(user));
+    const chatsBySearch = search ? chatsByUser.filter(c => {
         var receiver = c.users.find(u => u !== user);
-        return c.users.includes(user) && receiver.toLowerCase().includes(search.toLowerCase())
-    }) : chats;
+        return receiver.toLowerCase().includes(search.toLowerCase());
+    }) : chatsByUser;
 
     useEffect(() => {
         if (chats.length) {
@@ -18,12 +19,12 @@ function List({ user, chats, setChats, activeChatID, setActiveChat }) {
         }
         req('GET', 'chats', null, res => {
             const sortedChats = res.sort((c1, c2) => c2.lastMessageDate > c1.lastMessageDate ? 1 : -1);
-            setChats(sortedChats)
+            setChats(sortedChats);
         });
     });
 
     useEffect(() => {
-        var chatIDs = chats.map(c => c._id);
+        var chatIDs = chatsByUser.map(c => c._id);
         if (chatIDs.length && !chatIDs.includes(activeChatID)) {
             setActiveChat(chatIDs[0]);
         }
@@ -35,7 +36,7 @@ function List({ user, chats, setChats, activeChatID, setActiveChat }) {
         </form>
         <div className="chatsCont">
             <ul className="chats">
-                {filteredChats.map(c => 
+                {chatsBySearch.map(c => 
                     <li className={'chat ' + (c._id === activeChatID ? 'active' : '')} key={c._id} data-id={c._id} onClick={e => setActiveChat(c._id)}>
                         <span className="user">{c.users.find(u => u !== user)}</span>{' '}
                         <span className="date">[{toStr(c.lastMessageDate)}]</span>
