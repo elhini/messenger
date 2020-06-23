@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
+import io from 'socket.io-client';
 import './Chat.css'; 
+
+const socket = io('http://localhost:8000');
 
 function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
@@ -17,13 +20,30 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         }
         req('GET', 'messages/by-chat/' + activeChatID, null, res => {
             var sortedMessages = res.sort((c1, c2) => c1.date > c2.date ? 1 : -1);
-            setMessages({...messages, [activeChatID]: sortedMessages});
+            _setMessage(sortedMessages, true);
         });
     });
+    
+    function _setMessage(newMessages, isInitial) {
+        if (newMessages.length !== messagesByChat.length && !isInitial){
+            var lastMessage = newMessages.slice(-1)[0];
+            _updateChat(lastMessage);
+        }
+        setMessages({...messages, [activeChatID]: newMessages});
+    }
   
     useEffect(() => {
         const li = messageToScrollRef.current;
         li.scrollIntoView && li.scrollIntoView();
+    });
+
+    useEffect(() => {
+        socket.on('new-message', (newMessage) => {
+            _setMessage([...messagesByChat, newMessage]);
+        });
+        return () => {
+            socket.off('new-message');
+        };
     });
   
     function onSend(e, text) {
@@ -33,9 +53,8 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         req('POST', 'messages', newMessage, res => {
             setStatus('');
             newMessage = res;
-            setMessages({...messages, [activeChatID]: [...messagesByChat, newMessage]});
+            socket.emit('new-message', newMessage);
             setText(''); 
-            _updateChat(newMessage);
         });
     }
 
@@ -55,9 +74,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         req('DELETE', 'messages/' + id, null, res => {
             setStatus('');
             var messagesFiltered = messagesByChat.filter(m => m._id !== id);
-            setMessages({...messages, [activeChatID]: messagesFiltered});
-            var lastMessage = messagesFiltered.slice(-1)[0];
-            _updateChat(lastMessage);
+            _setMessage(messagesFiltered);
         });
     }
 
