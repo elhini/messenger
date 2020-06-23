@@ -2,25 +2,23 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
+import { req } from '../../utils/async';
 import './Chat.css'; 
 
 function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
+    const [status, setStatus] = useState('');
     const messageToScrollRef = useRef(null);
 
     useEffect(() => {
         if (activeChatID < 0 || messages[activeChatID]) {
             return;
         }
-        const urls = {
-            1: 'https://run.mocky.io/v3/826241dd-ae28-4c0e-b80e-f4fe99695435',
-            2: 'https://run.mocky.io/v3/fed1014c-f70e-4f06-8493-e48799bc8a31'
-        };
-        fetch(urls[activeChatID])
-        .then(res => res.json())
-        .then(res => setMessages({...messages, [activeChatID]: res}))
-        .catch(err => console.error('err', err))
+        req('GET', 'messages/by-chat/' + activeChatID, null, res => {
+            var sortedMessages = res.sort((c1, c2) => c1.date > c2.date ? 1 : -1);
+            setMessages({...messages, [activeChatID]: sortedMessages});
+        });
     });
   
     useEffect(() => {
@@ -30,21 +28,47 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
   
     function onSend(e, text) {
         e.preventDefault();
-        const newMessage = {user: user, text: text, id: messagesByChat.length + 1, date: (new Date()).toISOString()};
-        setMessages({...messages, [activeChatID]: [...messagesByChat, newMessage]});
-        setText(''); 
-        const chat = chats.find(c => c.id === activeChatID);
-        chat.lastMessageUser = user;
-        chat.lastMessageText = text;
-        chat.lastMessageDate = newMessage.date;
-        updateChat(chat);
+        let newMessage = {chatID: activeChatID, user: user, text: text, date: (new Date()).toISOString()};
+        setStatus('sending');
+        req('POST', 'messages', newMessage, res => {
+            setStatus('');
+            newMessage = res;
+            setMessages({...messages, [activeChatID]: [...messagesByChat, newMessage]});
+            setText(''); 
+            _updateChat(newMessage);
+        });
     }
 
+    function _updateChat(msg) {
+        const chat = chats.find(c => c._id === activeChatID);
+        chat.lastMessageUser = msg.user;
+        chat.lastMessageText = msg.text;
+        chat.lastMessageDate = msg.date;
+        req('PUT', 'chats/' + chat._id, chat, res => {
+            updateChat(res);
+        });
+    }
+  
+    function onDelete(e, id) {
+        e.preventDefault();
+        setStatus('deleting');
+        req('DELETE', 'messages/' + id, null, res => {
+            setStatus('');
+            var messagesFiltered = messagesByChat.filter(m => m._id !== id);
+            setMessages({...messages, [activeChatID]: messagesFiltered});
+            var lastMessage = messagesFiltered.slice(-1)[0];
+            _updateChat(lastMessage);
+        });
+    }
+
+    var isSending = status === 'sending';
+    var isDeleting = status === 'deleting';
     return <div className="Chat">
         <div className="messagesCont">
             <ul className="messages">
                 {messagesByChat.map(m => 
-                    <li className={'message ' + (m.user === user ? 'own' : '')} key={m.id}>
+                    <li className={'message ' + (m.user === user ? 'own' : '')} key={m._id}>
+                        <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button>
                         <span className="date">[{toStr(m.date)}]</span>
                         <br /> 
                         {m.text}
@@ -55,7 +79,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         </div>
         <form className="newMessageForm" onSubmit={e => onSend(e, text)}>
             <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} placeholder="Write a message..." />
-            <button>Send</button>
+            <button disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
         </form>
     </div>;
 }

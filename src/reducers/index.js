@@ -24,7 +24,7 @@ export function chats(state = CHATS_INITIAL_STATE, action) {
             return {...state, activeID: action.activeChatID};
         case 'UPDATE_CHAT':
             return {...state, list: state.list.map(chat => 
-                chat.id === action.chat.id ? action.chat : chat
+                chat._id === action.chat._id ? action.chat : chat
             )};
         default:
             return state;

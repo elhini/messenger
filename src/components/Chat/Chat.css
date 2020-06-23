@@ -23,6 +23,17 @@
     background: #eee;
 }
   
+.Chat .message .delete {
+    float: right;
+    margin: 0 0 5px 5px;
+    border: 0;
+    background: none;
+}
+.Chat .message .delete:hover {
+    background: #eee;
+    cursor: pointer;
+}
+  
 .Chat .message .user {
     color: #666;
 }
