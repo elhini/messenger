@@ -68,7 +68,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             <ul className="messages">
                 {messagesByChat.map(m => 
                     <li className={'message ' + (m.user === user ? 'own' : '')} key={m._id}>
-                        <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button>
+                        {m.user === user ? <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button> : null}
                         <span className="date">[{toStr(m.date)}]</span>
                         <br /> 
                         {m.text}
