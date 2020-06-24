@@ -1,0 +1,5 @@
+[
+    {"_id": 1, "login": "elhini", "name": "Mr. Elhini", "registrationDate": "2020-06-16T12:01:00.000Z"},
+    {"_id": 2, "login": "wife", "name": "Mrs. Elhini", "registrationDate": "2020-06-16T12:02:00.000Z"},
+    {"_id": 3, "login": "client", "name": "Mr. Client", "registrationDate": "2020-06-16T12:03:00.000Z"}
+]
