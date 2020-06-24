@@ -1,6 +1,6 @@
 import React from 'react';
 import Users from './components/Users';
-import List from './components/List';
+import ChatList from './components/ChatList';
 import Chat from './components/Chat';
 import './App.scss';
 
@@ -8,7 +8,7 @@ function App({ users, setUsers, user, setUser }) {
   return (<div>
     <Users />
     <div className="App">
-      <List />
+      <ChatList />
       <div className="divider"></div>
       <Chat />
     </div>

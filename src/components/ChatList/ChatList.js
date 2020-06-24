@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { setChats, setActiveChat } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
-import './List.scss'; 
+import './ChatList.scss'; 
 
-function List({ user, chats, setChats, activeChatID, setActiveChat }) {
+function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');
     const chatsByUser = chats.filter(c => c.users.includes(user));
     const chatsBySearch = search ? chatsByUser.filter(c => {
@@ -30,7 +30,7 @@ function List({ user, chats, setChats, activeChatID, setActiveChat }) {
         }
     });
 
-    return <div className="List">
+    return <div className="ChatList">
         <form className="chatSearchForm">
             <input type="text" className="chatSearchInput" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by receiver name" />
         </form>
@@ -60,4 +60,4 @@ const mapDispatchToProps = dispatch => ({
     setActiveChat: id => dispatch(setActiveChat(id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(List);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatList);
