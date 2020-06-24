@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, } from 'redux';
-import { user, chats, messages } from './reducers'
+import { users, user, chats, messages } from './reducers'
 import './index.css';
 import App from './App';
 
 const rootReducer = combineReducers({
+  users,
   user,
   chats,
   messages
