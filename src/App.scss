@@ -10,28 +10,6 @@ body,
   justify-content: center;
 }
 
-.users {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 15px;
-
-  li {
-    display: inline;
-    margin-left: 5px;
-
-    a {
-      padding: 5px;
-    }
-
-    .active {
-      text-decoration: none;
-      cursor: auto;
-      color: inherit;
-      background: #eee;
-    }
-  }
-}
-
 .App {
   border: 1px solid #666;
   width: 600px;
