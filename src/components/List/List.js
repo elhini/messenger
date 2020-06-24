@@ -25,8 +25,8 @@ function List({ user, chats, setChats, activeChatID, setActiveChat }) {
 
     useEffect(() => {
         var chatIDs = chatsByUser.map(c => c._id);
-        if (chatIDs.length && !chatIDs.includes(activeChatID)) {
-            setActiveChat(chatIDs[0]);
+        if (!chatIDs.includes(activeChatID)) {
+            setActiveChat(chatIDs.length ? chatIDs[0] : -1);
         }
     });
 
