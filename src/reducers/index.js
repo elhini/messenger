@@ -1,5 +1,7 @@
+import { getParamValue } from '../utils/url';
+
 const USER_INITIAL_STATE = {
-    login: 'elhini'
+    login: getParamValue('user') || 'elhini'
 };
 
 export function user(state = USER_INITIAL_STATE, action) {
