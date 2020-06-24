@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { setChats, setActiveChat } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
-import './List.css'; 
+import './List.scss'; 
 
 function List({ user, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');

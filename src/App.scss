@@ -14,22 +14,22 @@ body,
   list-style: none;
   padding: 0;
   margin: 0 0 15px;
-}
 
-.users li {
-  display: inline;
-  margin-left: 5px;
-}
+  li {
+    display: inline;
+    margin-left: 5px;
 
-.users li a {
-  padding: 5px;
-}
+    a {
+      padding: 5px;
+    }
 
-.users li .active {
-  text-decoration: none;
-  cursor: auto;
-  color: inherit;
-  background: #eee;
+    .active {
+      text-decoration: none;
+      cursor: auto;
+      color: inherit;
+      background: #eee;
+    }
+  }
 }
 
 .App {
@@ -37,9 +37,9 @@ body,
   width: 600px;
   height: 500px;
   display: flex;
-}
 
-.App .divider {
-  width: 5px;
-  background: #eee;
+  .divider {
+    width: 5px;
+    background: #eee;
+  }
 }

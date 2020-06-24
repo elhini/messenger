@@ -3,7 +3,7 @@ import List from './components/List';
 import Chat from './components/Chat';
 import { connect } from 'react-redux';
 import { setUser } from './actions';
-import './App.css';
+import './App.scss';
 
 function App({ user, setUser, chats }) {
   var users = [];

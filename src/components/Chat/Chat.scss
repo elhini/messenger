@@ -1,0 +1,64 @@
+.Chat {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .messagesCont {
+        height: 100%;
+        overflow: auto;
+    }
+    
+    .messages {
+        list-style: none;
+        margin: 0;
+        padding: 5px;
+    }
+    
+    .message {
+        padding: 5px;
+        width: 90%;
+        margin-bottom: 5px;
+        background: #eee;
+    
+        .delete {
+            float: right;
+            margin: 0 0 5px 5px;
+            border: 0;
+            background: none;
+        }
+        .delete:hover {
+            background: #eee;
+            cursor: pointer;
+        }
+        
+        .user {
+            color: #666;
+        }
+        
+        .date {
+            color: #aaa;
+        }
+    }
+    
+    .message.own {
+        margin-left: 7%;
+        background: #dcf8c6;
+    }
+    
+    .messageToScroll {
+        height: 18px;
+    }
+    
+    .newMessageForm {
+        display: flex;
+    }
+    
+    .newMessageInput {
+        width: 100%;
+    }
+    
+    .newMessageBtn {
+        cursor: pointer;
+    }
+}

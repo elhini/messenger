@@ -4,7 +4,7 @@ import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import io from 'socket.io-client';
-import './Chat.css'; 
+import './Chat.scss'; 
 
 const socket = io('http://localhost:8000');
 

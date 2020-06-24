@@ -1,0 +1,44 @@
+.List {
+    width: 250px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .chatsCont {
+        height: 100%;
+        overflow: auto;
+    }
+    
+    .chats {
+        list-style: none;
+        margin: 0;
+        padding: 5px;
+    }
+    
+    .chat {
+        padding: 5px;
+        margin-bottom: 5px;
+        background: #eee;
+        cursor: pointer;
+    
+        .user {
+            color: #666;
+        }
+    
+        .date {
+            color: #aaa;
+        }
+    }
+    
+    .chat.active {
+        background: #cce5ff;
+    }
+    
+    .chatSearchForm {
+        display: flex;
+    }
+    
+    .chatSearchInput {
+        width: 100%;
+    }
+}
