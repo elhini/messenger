@@ -21,4 +21,14 @@ module.exports = function(app, db) {
             }
         });
     });
+    app.get('/' + collection + '/search/:query', (req, res) => {
+        const query = { login: { $regex: '.*' + req.params.query + '.*' } };
+        db.collection(collection).find(query).toArray((err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                res.send(result);
+            }
+        });
+    });
 };

@@ -11,6 +11,26 @@ module.exports = function(app, db) {
             }
         });
     });
+    app.post('/' + collection, (req, res) => {
+        const obj = req.body;
+        db.collection(collection).insertOne(obj, (err, result) => {
+            if (err) { 
+                res.send({ 'error': err }); 
+            } else {
+                res.send(result.ops[0]);
+            }
+        });
+    });
+    app.delete('/' + collection + '/:id', (req, res) => {
+        const query = { _id: ObjectID(req.params.id) };
+        db.collection(collection).deleteOne(query, (err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                res.send({ 'deleted': true });
+            }
+        });
+    });
     app.put('/' + collection + '/:id', (req, res) => {
         const query = { '_id': parseInt(req.params.id) }; // TODO: remove parseInt
         const obj = req.body;
