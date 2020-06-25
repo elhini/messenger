@@ -10,7 +10,7 @@ function NewChat({ search, user, chats, setChats, setActiveChat }) {
     const [status, setStatus] = useState('');
     var availUsers = [];
     if (search && foundUsers.length) {
-        var oldUserLogins = chats.map(c => c.users.find(u => u !== user));
+        var oldUserLogins = chats.map(c => c.users.find(u => u !== user.login));
         availUsers = foundUsers.filter(u => !oldUserLogins.includes(u.login));
     }
 
@@ -25,7 +25,7 @@ function NewChat({ search, user, chats, setChats, setActiveChat }) {
     }, [search]);
 
     function createChat() {
-        var newChat = {users: [user, activeUser.login]};
+        var newChat = {users: [user.login, activeUser.login]};
         setStatus('sending');
         req('POST', 'chats', newChat, res => {
             setStatus('');
@@ -56,7 +56,7 @@ function NewChat({ search, user, chats, setChats, setActiveChat }) {
 }
 
 const mapStateToProps = state => ({
-    user: state.user.login,
+    user: state.user,
     chats: state.chats.list
 });
 

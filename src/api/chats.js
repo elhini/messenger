@@ -2,8 +2,8 @@ var ObjectID = require('mongodb').ObjectID;
 module.exports = function(app, db) {
     const collection = 'chats';
     const path = '/api/' + collection;
-    app.get(path, (req, res) => {
-        const query = {};
+    app.get(path + '/by-user/:login', (req, res) => {
+        const query = { users: req.params.login };
         db.collection(collection).find(query).toArray((err, result) => {
             if (err) {
                 res.send({ 'error': err });

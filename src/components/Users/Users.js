@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { setUsers, setUser } from '../../actions';
 import { req } from '../../utils/async';
+import { getParamValue } from '../../utils/url';
 import './Users.scss';
 
 function Users({ users, setUsers, user, setUser }) {
@@ -15,6 +16,11 @@ function Users({ users, setUsers, user, setUser }) {
         }
         req('GET', 'users', null, res => {
             setUsers(res);
+            if (res.length) {
+                var login = getParamValue('login');
+                var user = login ? res.find(u => u.login === login) : res[0];
+                setUser(user);
+            }
         });
     });
   
@@ -35,9 +41,9 @@ function Users({ users, setUsers, user, setUser }) {
         <span>Users:</span>
         <ul>{users.map(u => 
             <li key={u._id}>
-                <a href="/" className={user === u.login ? 'active' : ''} onClick={e => {
+                <a href="/" className={user.login === u.login ? 'active' : ''} onClick={e => {
                     e.preventDefault();
-                    setUser(u.login);
+                    setUser(u);
                 }}>{u.login}</a>
             </li>
         )}</ul>
@@ -50,7 +56,7 @@ function Users({ users, setUsers, user, setUser }) {
 }
 
 const mapStateToProps = state => ({
-    user: state.user.login,
+    user: state.user,
     users: state.users.list
 });
 

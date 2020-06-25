@@ -9,23 +9,24 @@ import './ChatList.scss';
 function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('');
-    const chatsByUser = chats.filter(c => c.users.includes(user));
-    const chatsBySearch = search ? chatsByUser.filter(c => {
-        var receiver = c.users.find(u => u !== user);
+    const chatsBySearch = search ? chats.filter(c => {
+        var receiver = c.users.find(u => u !== user.login);
         return receiver.toLowerCase().includes(search.toLowerCase());
-    }) : chatsByUser;
+    }) : chats;
 
     useEffect(() => {
+        if (!user.login) return;
+        setChats([]);
         setStatus('loading');
-        req('GET', 'chats', null, res => {
+        req('GET', 'chats/by-user/' + user.login, null, res => {
             setStatus('');
             const sortedChats = res.sort((c1, c2) => c2.lastMessageDate > c1.lastMessageDate ? 1 : -1);
             setChats(sortedChats);
         });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        var chatIDs = chatsByUser.map(c => c._id);
+        var chatIDs = chats.map(c => c._id);
         if (!chatIDs.includes(activeChatID)) {
             setActiveChat(chatIDs.length ? chatIDs[0] : -1);
         }
@@ -54,10 +55,10 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
                 {chatsBySearch.map(c => 
                     <li className={'chat ' + (c._id === activeChatID ? 'active' : '')} key={c._id} onClick={e => setActiveChat(c._id)}>
                         {!c.lastMessageDate ? <button className="delete" onClick={e => onDelete(e, c._id)} disabled={isDeleting}>x</button> : null}
-                        <span className="user">{c.users.find(u => u !== user)}</span>{' '}
+                        <span className="user">{c.users.find(u => u !== user.login)}</span>{' '}
                         {c.lastMessageDate && <span className="date">[{toStr(c.lastMessageDate)}]</span>}
                         <br /> 
-                        {c.lastMessageUser === user ? 'You: ' : ''}{c.lastMessageText}
+                        {c.lastMessageUser === user.login ? 'You: ' : ''}{c.lastMessageText}
                     </li>
                 )}
             </ul>
@@ -66,7 +67,7 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
 }
 
 const mapStateToProps = state => ({
-    user: state.user.login,
+    user: state.user,
     chats: state.chats.list,
     activeChatID: state.chats.activeID
 });

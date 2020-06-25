@@ -1,5 +1,3 @@
-import { getParamValue } from '../utils/url';
-
 const USERS_INITIAL_STATE = {
     list: []
 };
@@ -13,14 +11,12 @@ export function users(state = USERS_INITIAL_STATE, action) {
     }
 }
 
-const USER_INITIAL_STATE = {
-    login: getParamValue('user') || 'elhini'
-};
+const USER_INITIAL_STATE = {};
 
 export function user(state = USER_INITIAL_STATE, action) {
     switch (action.type) {
         case 'SET_USER':
-            return {...state, login: action.user};
+            return {...action.user};
         default:
             return state;
     }

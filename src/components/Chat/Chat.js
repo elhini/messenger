@@ -58,7 +58,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
   
     function onSend(e, text) {
         e.preventDefault();
-        let newMessage = {chatID: activeChatID, user: user, text: text, date: (new Date()).toISOString()};
+        let newMessage = {chatID: activeChatID, user: user.login, text: text, date: (new Date()).toISOString()};
         setStatus('sending');
         req('POST', 'messages', newMessage, res => {
             setStatus('');
@@ -95,8 +95,8 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         <div className="messagesCont">
             <ul className="messages">
                 {messagesByChat.map(m => 
-                    <li className={'message ' + (m.user === user ? 'own' : '')} key={m._id}>
-                        {m.user === user ? <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button> : null}
+                    <li className={'message ' + (m.user === user.login ? 'own' : '')} key={m._id}>
+                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button> : null}
                         <span className="date">[{toStr(m.date)}]</span>
                         <br /> 
                         {m.text}
@@ -113,7 +113,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
 }
 
 const mapStateToProps = state => ({
-    user: state.user.login,
+    user: state.user,
     chats: state.chats.list,
     activeChatID: state.chats.activeID,
     messages: state.messages.list
