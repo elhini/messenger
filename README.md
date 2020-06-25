@@ -5,5 +5,5 @@ TODO:
 + users api handler
 + users list from DB
 + create user
-- search user
-- create chat
++ search user
++ create chat

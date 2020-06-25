@@ -15,9 +15,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     const messageToScrollRef = useRef(null);
 
     useEffect(() => {
-        if (activeChatID < 0 || messages[activeChatID]) {
-            return;
-        }
+        if (activeChatID < 0 || messages[activeChatID]) return;
         setStatus('loading');
         req('GET', 'messages/by-chat/' + activeChatID, null, res => {
             setStatus('');
