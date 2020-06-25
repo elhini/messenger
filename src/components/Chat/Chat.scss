@@ -4,6 +4,10 @@
     display: flex;
     flex-direction: column;
 
+    p {
+        margin: 5px;
+    }
+
     .messagesCont {
         height: 100%;
         overflow: auto;

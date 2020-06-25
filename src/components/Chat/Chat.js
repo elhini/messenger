@@ -18,15 +18,17 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         if (activeChatID < 0 || messages[activeChatID]) {
             return;
         }
+        setStatus('loading');
         req('GET', 'messages/by-chat/' + activeChatID, null, res => {
+            setStatus('');
             var sortedMessages = res.sort((c1, c2) => c1.date > c2.date ? 1 : -1);
             _setMessage(sortedMessages, true);
         });
-    });
+    }, [activeChatID]); // eslint-disable-line react-hooks/exhaustive-deps
     
     function _setMessage(newMessages, isInitial) {
         if (newMessages.length !== messagesByChat.length && !isInitial){
-            var lastMessage = newMessages.slice(-1)[0];
+            var lastMessage = newMessages.slice(-1)[0] || {};
             _updateChat(lastMessage);
         }
         setMessages({...messages, [activeChatID]: newMessages});
@@ -87,9 +89,11 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         });
     }
 
+    var isLoading = status === 'loading';
     var isSending = status === 'sending';
     var isDeleting = status === 'deleting';
     return <div className="Chat">
+        {isLoading ? <p>Loading messages...</p> : (!messagesByChat.length ? <p>No messages found</p> : null)}
         <div className="messagesCont">
             <ul className="messages">
                 {messagesByChat.map(m => 
