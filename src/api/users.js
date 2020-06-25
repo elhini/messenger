@@ -1,7 +1,8 @@
 var ObjectID = require('mongodb').ObjectID;
 module.exports = function(app, db) {
     const collection = 'users';
-    app.get('/' + collection, (req, res) => {
+    const path = '/api/' + collection;
+    app.get(path, (req, res) => {
         const query = {};
         db.collection(collection).find(query).toArray((err, result) => {
             if (err) {
@@ -11,7 +12,7 @@ module.exports = function(app, db) {
             }
         });
     });
-    app.post('/' + collection, (req, res) => {
+    app.post(path, (req, res) => {
         const obj = req.body;
         db.collection(collection).insertOne(obj, (err, result) => {
             if (err) {
@@ -21,7 +22,7 @@ module.exports = function(app, db) {
             }
         });
     });
-    app.get('/' + collection + '/search/:query', (req, res) => {
+    app.get(path + '/search/:query', (req, res) => {
         const query = { login: { $regex: '.*' + req.params.query + '.*' } };
         db.collection(collection).find(query).toArray((err, result) => {
             if (err) {

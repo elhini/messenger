@@ -1,6 +1,6 @@
 export function req(method, path, data, callback) {
     var body = data ? JSON.stringify(data) : null;
-    return fetch('http://localhost:8000/' + path, {
+    return fetch('http://localhost:8000/api/' + path, {
         method: method, 
         headers: {'Content-Type': 'application/json'}, 
         body: body

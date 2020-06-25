@@ -1,7 +1,8 @@
 var ObjectID = require('mongodb').ObjectID;
 module.exports = function(app, db) {
     const collection = 'messages';
-    app.get('/' + collection + '/by-chat/:chatID', (req, res) => {
+    const path = '/api/' + collection;
+    app.get(path + '/by-chat/:chatID', (req, res) => {
         const query = { chatID: parseInt(req.params.chatID) }; // TODO: remove parseInt
         db.collection(collection).find(query).toArray((err, result) => {
             if (err) {
@@ -11,7 +12,7 @@ module.exports = function(app, db) {
             }
         });
     });
-    app.post('/' + collection, (req, res) => {
+    app.post(path, (req, res) => {
         const obj = req.body;
         db.collection(collection).insertOne(obj, (err, result) => {
             if (err) { 
@@ -21,7 +22,7 @@ module.exports = function(app, db) {
             }
         });
     });
-    app.delete('/' + collection + '/:id', (req, res) => {
+    app.delete(path + '/:id', (req, res) => {
         const query = { _id: ObjectID(req.params.id) };
         db.collection(collection).deleteOne(query, (err, result) => {
             if (err) {
