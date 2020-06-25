@@ -4,6 +4,10 @@
     display: flex;
     flex-direction: column;
 
+    p {
+        margin: 5px;
+    }
+
     .chatsCont {
         height: 100%;
         overflow: auto;
@@ -28,6 +32,10 @@
         .date {
             color: #aaa;
         }
+    }
+        
+    .chat:hover {
+        background: #ddd;
     }
     
     .chat.active {
