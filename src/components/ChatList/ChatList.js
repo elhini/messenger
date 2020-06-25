@@ -30,8 +30,19 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
             setActiveChat(chatIDs.length ? chatIDs[0] : -1);
         }
     });
+  
+    function onDelete(e, id) {
+        e.preventDefault();
+        setStatus('deleting');
+        req('DELETE', 'chats/' + id, null, res => {
+            setStatus('');
+            var chatsFiltered = chats.filter(c => c._id !== id);
+            setChats(chatsFiltered);
+        });
+    }
 
     var isLoading = status === 'loading';
+    var isDeleting = status === 'deleting';
     return <div className="ChatList">
         <form className="chatSearchForm">
             <input type="text" className="chatSearchInput" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by receiver name" />
@@ -42,6 +53,7 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
             <ul className="chats">
                 {chatsBySearch.map(c => 
                     <li className={'chat ' + (c._id === activeChatID ? 'active' : '')} key={c._id} onClick={e => setActiveChat(c._id)}>
+                        {!c.lastMessageDate ? <button className="delete" onClick={e => onDelete(e, c._id)} disabled={isDeleting}>x</button> : null}
                         <span className="user">{c.users.find(u => u !== user)}</span>{' '}
                         {c.lastMessageDate && <span className="date">[{toStr(c.lastMessageDate)}]</span>}
                         <br /> 

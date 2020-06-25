@@ -24,6 +24,17 @@
         margin-bottom: 5px;
         background: #eee;
         cursor: pointer;
+
+        .delete {
+            float: right;
+            margin: 0 0 5px 5px;
+            border: 0;
+            background: none;
+        }
+        .delete:hover {
+            background: #eee;
+            cursor: pointer;
+        }
     
         .user {
             color: #666;
