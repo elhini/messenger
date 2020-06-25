@@ -4,7 +4,7 @@ import ChatList from './components/ChatList';
 import Chat from './components/Chat';
 import './App.scss';
 
-function App({ users, setUsers, user, setUser }) {
+function App() {
   return (<div>
     <Users />
     <div className="App">
