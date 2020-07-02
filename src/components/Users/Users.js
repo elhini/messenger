@@ -47,10 +47,10 @@ function Users({ users, setUsers, user, setUser }) {
                 }}>{u.login}</a>
             </li>
         )}</ul>
-        <form className="form" onSubmit={e => onSend(e)}>
-            <input type="text" className="loginInput" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
-            <input type="text" className="nameInput" value={name} onChange={e => setName(e.target.value)} placeholder="name" />
-            <button className="btn" disabled={isSending}>{isSending ? 'Creating...' : 'Create'}</button>
+        <form onSubmit={e => onSend(e)}>
+            <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="name" />
+            <button disabled={isSending}>{isSending ? 'Creating...' : 'Create'}</button>
         </form>
     </div>;
 }
