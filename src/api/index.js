@@ -1,8 +1,8 @@
-const users = require('./users');
-const chats = require('./chats');
-const messages = require('./messages');
+const UsersAPI = require('./users');
+const ChatsAPI = require('./chats');
+const MessagesAPI = require('./messages');
 module.exports = function(app, db) {
-    users(app, db);
-    chats(app, db);
-    messages(app, db);
+    new UsersAPI(app, db);
+    new ChatsAPI(app, db);
+    new MessagesAPI(app, db);
 };
