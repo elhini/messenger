@@ -14,4 +14,4 @@ class UsersAPI extends APIBase {
     }
 }
 
-module.exports = Users;
+module.exports = UsersAPI;

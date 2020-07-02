@@ -14,4 +14,4 @@ class MessagesAPI extends APIBase {
     }
 }
 
-module.exports = Messages;
+module.exports = MessagesAPI;

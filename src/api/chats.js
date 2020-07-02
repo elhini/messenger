@@ -14,4 +14,4 @@ class ChatsAPI extends APIBase {
     }
 }
 
-module.exports = Chats;
+module.exports = ChatsAPI;
