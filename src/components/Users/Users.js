@@ -7,7 +7,7 @@ import './Users.scss';
 
 function Users({ users, setUsers, user, setUser }) {
     const [login, setLogin] = useState('');
-    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
     const [status, setStatus] = useState('');
 
     useEffect(() => {
@@ -26,12 +26,12 @@ function Users({ users, setUsers, user, setUser }) {
   
     function onSend(e) {
         e.preventDefault();
-        let newUser = {login: login, name: name, registrationDate: (new Date()).toISOString()};
+        let newUser = {login: login, password: password, registrationDate: (new Date()).toISOString()};
         setStatus('sending');
-        req('POST', 'users', newUser, res => {
+        req('POST', 'users/register', newUser, res => {
             setUsers([...users, res]);
             setLogin(''); 
-            setName(''); 
+            setPassword(''); 
             setStatus('');
         });
     }
@@ -49,7 +49,7 @@ function Users({ users, setUsers, user, setUser }) {
         )}</ul>
         <form onSubmit={e => onSend(e)}>
             <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
-            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="name" />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
             <button disabled={isSending}>{isSending ? 'Creating...' : 'Create'}</button>
         </form>
     </div>;

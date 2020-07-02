@@ -8,8 +8,8 @@ TODO:
 + search users method
 + create chat method
 + refactor api handlers
++ password input/field
 - redesign new user form
-- password input/field
-- login/auth form
 - sessions collection
 - sessions api handler
+- login/auth form

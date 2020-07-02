@@ -42,7 +42,7 @@ function NewChat({ search, user, chats, setChats, setActiveChat }) {
             <ul>
                 {availUsers.map(u => 
                     <li className={u._id === activeUser._id ? 'active' : ''} key={u._id} onClick={e => setActiveUser(u)}>
-                        {u.login} / {u.name}
+                        {u.login}
                     </li>
                 )}
             </ul>
