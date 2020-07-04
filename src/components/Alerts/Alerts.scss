@@ -1,0 +1,30 @@
+.Alerts {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+  
+        li {
+            margin-bottom: 5px;
+            padding: 5px;
+            border: 1px solid;
+            border-radius: 5px;
+    
+            &.success {
+                color: green;
+                border-color:  rgba(0, 255, 0, 0.3);
+                background: rgba(0, 255, 0, 0.1);
+            }
+    
+            &.error {
+                color: red;
+                border-color:  rgba(255, 0, 0, 0.3);
+                background: rgba(255, 0, 0, 0.1);
+            }
+        }
+    }
+}
