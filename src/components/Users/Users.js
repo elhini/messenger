@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { setUsers, setUser } from '../../actions';
+import { appendAlert, setUsers, setUser } from '../../actions';
 import { req } from '../../utils/async';
 import { getParamValue } from '../../utils/url';
 import './Users.scss';
 
-function Users({ users, setUsers, user, setUser }) {
+function Users({ appendAlert, users, setUsers, user, setUser }) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState('');
@@ -29,11 +29,14 @@ function Users({ users, setUsers, user, setUser }) {
         let newUser = {login: login, password: password, registrationDate: (new Date()).toISOString()};
         setStatus('sending');
         req('POST', 'users/register', newUser, res => {
-            setUsers([...users, res]);
-            setLogin(''); 
-            setPassword(''); 
             setStatus('');
-        });
+            if (!res.error) {
+                setUsers([...users, res]);
+                setLogin('');
+                setPassword('');
+                appendAlert({ text: 'User has been added', style: 'success'});
+            }
+        }, appendAlert);
     }
 
     var isSending = status === 'sending';
@@ -61,6 +64,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    appendAlert: alert => dispatch(appendAlert(alert)),
     setUser: user => dispatch(setUser(user)),
     setUsers: users => dispatch(setUsers(users))
 });

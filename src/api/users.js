@@ -11,11 +11,17 @@ class UsersAPI extends APIBase {
                 const query = { login: { $regex: '.*' + req.params.query + '.*' } };
                 this.methods['get'](req, res, null, query);
             },
-            'post /register': (req, res) => {
-                bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+            'post /register': async (req, res) => {
+                var users = await this.methods['get'](req, res, null, {login: req.body.login}, true);
+                if (users[0]) {
+                    return res.send({ 'error': 'user with provided login already exists' });
+                }
+                bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
                     if (err) return console.error(err);
                     req.body.password = hash;
-                    this.methods['post'](req, res);
+                    var user = await this.methods['post'](req, res, null, true);
+                    delete user.password;
+                    return res.send(user);
                 });
             }
         };
