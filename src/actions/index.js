@@ -1,3 +1,13 @@
+export const appendAlert = alert => ({
+    type: 'APPEND_ALERT',
+    alert
+});
+
+export const removeAlert = id => ({
+    type: 'REMOVE_ALERT',
+    id
+});
+
 export const setUsers = users => ({
     type: 'SET_USERS',
     users

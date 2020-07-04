@@ -1,3 +1,19 @@
+const ALERTS_STATE = {
+    list: []
+};
+
+export function alerts(state = ALERTS_STATE, action) {
+    switch (action.type) {
+        case 'APPEND_ALERT':
+            action.alert.id = state.list.length;
+            return {...state, list: [...state.list, action.alert]};
+        case 'REMOVE_ALERT':
+            return {...state, list: state.list.filter(a => a.id !== action.id)};
+        default:
+            return state;
+    }
+}
+
 const USERS_INITIAL_STATE = {
     list: []
 };
