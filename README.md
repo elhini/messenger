@@ -1,6 +1,6 @@
 simple messenger
 
-TODO:
+DONE:
 + users collection
 + users api handler
 + get users method
@@ -9,6 +9,8 @@ TODO:
 + create chat method
 + refactor api handlers
 + password input/field
++ api errors handling
+TODO:
 - redesign new user form
 - sessions collection
 - sessions api handler
