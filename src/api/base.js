@@ -3,25 +3,34 @@ class APIBase {
     constructor(db, collection) {
         this.path = '/api/' + collection;
         this.methods = {
-            'get': (req, res, next, query = {}) => {
+            'get': (req, res, next, query = {}, dontSendResp) => {
                 console.log('get', collection, 'query', query);
-                db.collection(collection).find(query).toArray((err, result) => {
-                    if (err) {
-                        res.send({ 'error': err });
-                    } else {
-                        res.send(result);
-                    }
+                return new Promise((resolve, reject) => {
+                    db.collection(collection).find(query).toArray((err, result) => {
+                        if (err) {
+                            reject(err);
+                            !dontSendResp && res.send({ 'error': err });
+                        } else {
+                            resolve(result);
+                            !dontSendResp && res.send(result);
+                        }
+                    });
                 });
             },
-            'post': (req, res) => {
+            'post': (req, res, next, dontSendResp) => {
                 console.log('post', collection);
                 const obj = req.body;
-                db.collection(collection).insertOne(obj, (err, result) => {
-                    if (err) { 
-                        res.send({ 'error': err }); 
-                    } else {
-                        res.send(result.ops[0]);
-                    }
+                return new Promise((resolve, reject) => {
+                    db.collection(collection).insertOne(obj, (err, result) => {
+                        if (err) { 
+                            reject(err);
+                            !dontSendResp && res.send({ 'error': err }); 
+                        } else {
+                            var obj = result.ops[0];
+                            resolve(obj);
+                            !dontSendResp && res.send(obj);
+                        }
+                    });
                 });
             },
             'get /:id': (req, res) => {
