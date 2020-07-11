@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const ALERTS_STATE = {
     list: []
 };
@@ -27,7 +29,7 @@ export function users(state = USERS_INITIAL_STATE, action) {
     }
 }
 
-const USER_INITIAL_STATE = {};
+const USER_INITIAL_STATE = {login: Cookies.get('logged-as')};
 
 export function user(state = USER_INITIAL_STATE, action) {
     switch (action.type) {

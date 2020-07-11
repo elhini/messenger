@@ -9,7 +9,7 @@ const port           = 8000;
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) => {
   if (err) return console.log(err);

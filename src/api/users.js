@@ -39,7 +39,7 @@ class UsersAPI extends APIBase {
                         req.body.loginDate = new Date();
                         var user = req.body; // TODO: await sessionsAPI['post'](req, res, null, true);
                         delete user.password;
-                        res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+                        res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000 });
                         return res.send(user);
                     }
                     else {

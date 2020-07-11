@@ -3,6 +3,7 @@ export function req(method, path, data, callback, appendAlert = () => {}) {
     return fetch('http://localhost:8000/api/' + path, {
         method: method, 
         headers: {'Content-Type': 'application/json'}, 
+        credentials: 'include',
         body: body
     })
     .then(res => {

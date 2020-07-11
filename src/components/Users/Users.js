@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { appendAlert, setUser } from '../../actions';
 import { req } from '../../utils/async';
+import Cookies from 'js-cookie';
 import './Users.scss';
 
 function Users({ appendAlert, user, setUser }) {
@@ -28,6 +29,11 @@ function Users({ appendAlert, user, setUser }) {
         }, appendAlert);
     }
 
+    function clearUser() {
+        setUser({});
+        Cookies.remove('logged-as');
+    }
+
     var isSending = status === 'sending';
     var btnDefaultText = isRegister ? 'Register' : 'Log in';
     var btnSendingText = isRegister ? 'Registering...' : 'Logging in...';
@@ -36,7 +42,7 @@ function Users({ appendAlert, user, setUser }) {
         {name: 'register', text: 'Register'}
     ];
     return <div className="Users">
-        {user.login ? <div>Logged as <b>{user.login}</b> <button onClick={e => setUser({})}>Log out</button></div> : 
+        {user.login ? <div>Logged as <b>{user.login}</b> <button onClick={clearUser}>Log out</button></div> : 
         <div>{formTypes.map(t => 
             <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
         )}</div>}
