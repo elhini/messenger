@@ -15,8 +15,8 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
     }) : chats;
 
     useEffect(() => {
-        if (!user.login) return;
         setChats([]);
+        if (!user.login) return;
         setStatus('loading');
         req('GET', 'chats/by-user/' + user.login, null, res => {
             setStatus('');

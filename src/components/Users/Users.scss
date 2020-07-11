@@ -2,35 +2,20 @@
     margin-bottom: 15px;
     display: flex;
 
-    ul {
-        display: inline-block;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-  
-    li {
-        display: inline;
-        margin-left: 5px;
+    label {
+        margin-right: 15px;
 
-        a {
-            padding: 5px;
-        }
-
-        .active {
-            text-decoration: none;
-            cursor: auto;
-            color: inherit;
-            background: #eee;
+        input {
+            margin: 0;
         }
     }
 
     form {
         display: inline-block;
-        margin-left: auto;
 
         input {
             width: 70px;
+            margin-right: 5px;
         }
     }
 }

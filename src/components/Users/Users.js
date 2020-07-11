@@ -1,72 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { appendAlert, setUsers, setUser } from '../../actions';
+import { appendAlert, setUser } from '../../actions';
 import { req } from '../../utils/async';
-import { getParamValue } from '../../utils/url';
 import './Users.scss';
 
-function Users({ appendAlert, users, setUsers, user, setUser }) {
+function Users({ appendAlert, user, setUser }) {
+    const [formType, setFormType] = useState('login');
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState('');
 
-    useEffect(() => {
-        if (users.length) {
-            return;
-        }
-        req('GET', 'users', null, res => {
-            setUsers(res);
-            if (res.length) {
-                var login = getParamValue('login');
-                var user = login ? res.find(u => u.login === login) : res[0];
-                setUser(user);
-            }
-        });
-    });
+    var isRegister = formType === 'register';
   
     function onSend(e) {
         e.preventDefault();
-        let newUser = {login: login, password: password, registrationDate: (new Date()).toISOString()};
+        let userToSend = {login: login, password: password};
         setStatus('sending');
-        req('POST', 'users/register', newUser, res => {
+        req('POST', isRegister ? 'users/register' : 'users/login', userToSend, res => {
             setStatus('');
+            setUser(res);
             if (!res.error) {
-                setUsers([...users, res]);
                 setLogin('');
                 setPassword('');
-                appendAlert({ text: 'User has been added', style: 'success'});
+                var madeAction = isRegister ? 'registered' : 'logged in';
+                appendAlert({ text: 'You have successfully ' + madeAction, style: 'success'});
             }
         }, appendAlert);
     }
 
     var isSending = status === 'sending';
+    var btnDefaultText = isRegister ? 'Register' : 'Log in';
+    var btnSendingText = isRegister ? 'Registering...' : 'Logging in...';
+    var formTypes = [
+        {name: 'login', text: 'Log in'},
+        {name: 'register', text: 'Register'}
+    ];
     return <div className="Users">
-        <span>Users:</span>
-        <ul>{users.map(u => 
-            <li key={u._id}>
-                <a href="/" className={user.login === u.login ? 'active' : ''} onClick={e => {
-                    e.preventDefault();
-                    setUser(u);
-                }}>{u.login}</a>
-            </li>
-        )}</ul>
+        {user.login ? <div>Logged as <b>{user.login}</b> <button onClick={e => setUser({})}>Log out</button></div> : 
+        <div>{formTypes.map(t => 
+            <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
+        )}</div>}
+        {user.login ? null : 
         <form onSubmit={e => onSend(e)}>
             <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
-            <button disabled={isSending}>{isSending ? 'Creating...' : 'Create'}</button>
-        </form>
+            <button disabled={isSending}>{isSending ? btnSendingText : btnDefaultText}</button>
+        </form>}
     </div>;
 }
 
 const mapStateToProps = state => ({
-    user: state.user,
-    users: state.users.list
+    user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({
     appendAlert: alert => dispatch(appendAlert(alert)),
-    setUser: user => dispatch(setUser(user)),
-    setUsers: users => dispatch(setUsers(users))
+    setUser: user => dispatch(setUser(user))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users);
