@@ -10,9 +10,10 @@ DONE:
 + refactor api handlers
 + password input/field
 + api errors handling
++ redesign new user form
++ login/auth form
++ store logged user in cookie
 
 TODO:
-- redesign new user form
 - sessions collection
 - sessions api handler
-- login/auth form
