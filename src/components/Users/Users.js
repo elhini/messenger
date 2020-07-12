@@ -18,15 +18,12 @@ function Users({ appendAlert, user, setUser }) {
         let userToSend = {login: login, password: password};
         setStatus('sending');
         req('POST', isRegister ? 'users/register' : 'users/login', userToSend, res => {
-            setStatus('');
             setUser(res);
-            if (!res.error) {
-                setLogin('');
-                setPassword('');
-                var madeAction = isRegister ? 'registered' : 'logged in';
-                appendAlert({ text: 'You have successfully ' + madeAction, style: 'success'});
-            }
-        }, appendAlert);
+            setLogin('');
+            setPassword('');
+            var madeAction = isRegister ? 'registered' : 'logged in';
+            appendAlert({ text: 'You have successfully ' + madeAction, style: 'success' });
+        }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
     }
 
     function clearUser() {

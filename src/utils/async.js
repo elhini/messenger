@@ -1,4 +1,4 @@
-export function req(method, path, data, callback, appendAlert = () => {}) {
+export function req(method, path, data, successCallback, errorCallback = () => {}, finallyCallback) {
     var body = data ? JSON.stringify(data) : null;
     return fetch('http://localhost:8000/api/' + path, {
         method: method, 
@@ -19,12 +19,13 @@ export function req(method, path, data, callback, appendAlert = () => {}) {
     .then(res => {
         console.log(method, path, ':', res);
         if (res.error) {
-            appendAlert({ text: res.error, style: 'error'});
+            throw new Error(res.error);
         }
-        callback(res);
+        successCallback(res);
     })
     .catch(err => {
         console.error('fetch failed with', err);
-        appendAlert({ text: err.toString(), style: 'error' });
-    });
+        errorCallback(err.toString());
+    })
+    .finally(finallyCallback);
 }
