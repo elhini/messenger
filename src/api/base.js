@@ -3,7 +3,7 @@ class APIBase {
     constructor(db, collection) {
         this.path = '/api/' + collection;
         this.methods = {
-            'get': (req, res, next, query = {}, dontSendResp) => {
+            'get': (req, res, next, query = {}, dontSendResp = false) => {
                 console.log('get', collection, 'query', query);
                 return new Promise((resolve, reject) => {
                     db.collection(collection).find(query).toArray((err, result) => {
@@ -17,7 +17,7 @@ class APIBase {
                     });
                 });
             },
-            'post': (req, res, next, dontSendResp) => {
+            'post': (req, res, next, dontSendResp = false) => {
                 console.log('post', collection);
                 const obj = req.body;
                 return new Promise((resolve, reject) => {
