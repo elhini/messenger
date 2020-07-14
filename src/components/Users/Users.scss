@@ -1,6 +1,20 @@
 .Users {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: flex;
+    min-width: 430px;
+
+    .logged-as {
+        display: flex;
+        width: 100%;
+
+        b {
+            margin-left: 5px;
+        }
+
+        button {
+            margin-left: auto;
+        }
+    }
 
     label {
         margin-right: 15px;

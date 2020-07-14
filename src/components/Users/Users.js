@@ -39,7 +39,7 @@ function Users({ appendAlert, user, setUser }) {
         {name: 'register', text: 'Register'}
     ];
     return <div className="Users">
-        {user.login ? <div>Logged as <b>{user.login}</b> <button onClick={clearUser}>Log out</button></div> : 
+        {user.login ? <div className="logged-as">Logged as <b>{user.login}</b> <button onClick={clearUser}>Log out</button></div> : 
         <div>{formTypes.map(t => 
             <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
         )}</div>}
