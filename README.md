@@ -16,4 +16,5 @@ DONE:
 + refactor ids from interger to string
 
 TODO:
+- filter messages on socket server
 - panels resize

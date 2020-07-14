@@ -20,15 +20,11 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         req('GET', 'messages/by-chat/' + activeChatID, null, res => {
             setStatus('');
             var sortedMessages = res.sort((c1, c2) => c1.date > c2.date ? 1 : -1);
-            _setMessage(sortedMessages, true);
+            _setMessage(sortedMessages);
         });
     }, [activeChatID]); // eslint-disable-line react-hooks/exhaustive-deps
     
-    function _setMessage(newMessages, isInitial) {
-        if (newMessages.length !== messagesByChat.length && !isInitial){
-            var lastMessage = newMessages.slice(-1)[0] || {};
-            _updateChat(lastMessage);
-        }
+    function _setMessage(newMessages) {
         setMessages({...messages, [activeChatID]: newMessages});
     }
   
@@ -46,6 +42,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         socket.on('new-message', (newMessage) => {
             if (!canRead(newMessage)) return; // TODO: move it to server
             _setMessage([...messagesByChat, newMessage]);
+            _updateChat(newMessage, false, true);
         });
         return () => {
             socket.off('new-message');
@@ -57,6 +54,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             if (!canRead(delMessage)) return; // TODO: move it to server
             var messagesFiltered = messagesByChat.filter(m => m._id !== delMessage._id);
             _setMessage(messagesFiltered);
+            _updateChat(delMessage, true, true);
         });
         return () => {
             socket.off('del-message');
@@ -70,27 +68,37 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         req('POST', 'messages', newMessage, res => {
             setStatus('');
             newMessage = res;
+            _updateChat(newMessage, false);
             socket.emit('new-message', newMessage);
             setText(''); 
         });
     }
 
-    function _updateChat(msg) {
+    function _updateChat(msg, isDeleted, noRequest) {
+        var newMessages = isDeleted ? messagesByChat.filter(m => m._id !== msg._id) : [...messagesByChat, msg];
+        var lastMessage = newMessages.slice(-1)[0] || {};
         const chat = chats.find(c => c._id === activeChatID);
-        chat.lastMessageUser = msg.user;
-        chat.lastMessageText = msg.text;
-        chat.lastMessageDate = msg.date;
-        req('PUT', 'chats/' + chat._id, chat, res => {
-            updateChat(res);
-        });
+        if (!chat) return;
+        chat.lastMessageUser = lastMessage.user;
+        chat.lastMessageText = lastMessage.text;
+        chat.lastMessageDate = lastMessage.date;
+        if (noRequest){
+            updateChat(chat);
+        }
+        else {
+            req('PUT', 'chats/' + chat._id, chat, res => {
+                updateChat(res);
+            });
+        }
     }
   
-    function onDelete(e, msg) {
+    function onDelete(e, delMessage) {
         e.preventDefault();
         setStatus('deleting');
-        req('DELETE', 'messages/' + msg._id, null, res => {
+        req('DELETE', 'messages/' + delMessage._id, null, res => {
             setStatus('');
-            socket.emit('del-message', msg);
+            _updateChat(delMessage, true);
+            socket.emit('del-message', delMessage);
         });
     }
 
