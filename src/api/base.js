@@ -45,9 +45,7 @@ class APIBase {
                 });
             },
             'put /:id': (req, res) => {
-                // some ids are integer
-                try { var _id = ObjectID(req.params.id) } catch (e) { var _id = parseInt(req.params.id) }
-                var query = { _id: _id };
+                var query = { _id: ObjectID(req.params.id) };
                 console.log('put /:id', collection, 'query', query);
                 const obj = req.body;
                 let _obj = {...obj};
