@@ -13,8 +13,7 @@ DONE:
 + redesign new user form
 + login/auth form
 + store logged user in cookie
++ refactor ids from interger to string
 
 TODO:
 - panels resize
-- sessions collection
-- sessions api handler
