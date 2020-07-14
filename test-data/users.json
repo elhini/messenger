@@ -1,5 +1,5 @@
 [
-    {"_id": 1, "login": "elhini", "name": "Mr. Elhini", "registrationDate": "2020-06-16T12:01:00.000Z"},
-    {"_id": 2, "login": "wife", "name": "Mrs. Elhini", "registrationDate": "2020-06-16T12:02:00.000Z"},
-    {"_id": 3, "login": "client", "name": "Mr. Client", "registrationDate": "2020-06-16T12:03:00.000Z"}
+    {"_id":{"$oid":"5f0e250c360ec567e7c84d47"},"login":"elhini","password":"$2b$10$ZsxTNKnyNuJgojvMypUrm.CzKFVv0T1kxaUFbqo64SOuztnjhWfHG","registrationDate":{"$date":"2020-07-14T21:35:08.458Z"}},
+    {"_id":{"$oid":"5f0e2513360ec567e7c84d48"},"login":"client","password":"$2b$10$2jg2dFHdFGx369sxFrO0FeJjeD0yVhsBzu9yQ0WuV2oJPbUvomvrW","registrationDate":{"$date":"2020-07-14T21:35:15.606Z"}},
+    {"_id":{"$oid":"5f0e26d803d2b36e2e7713fd"},"login":"wife","password":"$2b$10$y9mWG60ffDutD2pWYUUGGeI44sdxOxnt1Y7Bo2CTPaWekffr/baZW","registrationDate":{"$date":"2020-07-14T21:42:48.709Z"}}
 ]

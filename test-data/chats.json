@@ -1,4 +1,4 @@
 [
-    {"_id": 1, "users": ["client", "elhini"], "lastMessageUser": "Клиент", "lastMessageText": "Спасибо за оперативность!", "lastMessageDate": "2020-06-16T12:13:00.000Z"},
-    {"_id": 2, "users": ["wife", "elhini"], "lastMessageUser": "elhini", "lastMessageText": "ок", "lastMessageDate": "2020-06-16T12:00:00.000Z"}
+    {"_id":{"$oid":"5f0e251e360ec567e7c84d49"},"users":["elhini","client"],"lastMessageDate":"2020-07-14T21:43:03.580Z","lastMessageText":"спасибо, посмотрю","lastMessageUser":"client"},
+    {"_id":{"$oid":"5f0e26e103d2b36e2e7713fe"},"users":["wife","elhini"],"lastMessageDate":"2020-07-14T21:43:11.750Z","lastMessageText":"уже еду","lastMessageUser":"elhini"}
 ]
