@@ -15,5 +15,6 @@ DONE:
 + store logged user in cookie
 
 TODO:
+- panels resize
 - sessions collection
 - sessions api handler
