@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { setChats, setActiveChat } from '../../actions';
+import { appendAlert, setChats, setActiveChat } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import NewChat from '../NewChat';
 import './ChatList.scss'; 
 
-function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
+function ChatList({ appendAlert, user, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('');
     const chatsBySearch = search ? chats.filter(c => {
@@ -19,10 +19,9 @@ function ChatList({ user, chats, setChats, activeChatID, setActiveChat }) {
         if (!user.login) return;
         setStatus('loading');
         req('GET', 'chats/by-user/' + user.login, null, res => {
-            setStatus('');
             const sortedChats = res.sort((c1, c2) => c2.lastMessageDate > c1.lastMessageDate ? 1 : -1);
             setChats(sortedChats);
-        });
+        }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
     }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -73,6 +72,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    appendAlert: alert => dispatch(appendAlert(alert)),
     setChats: chats => dispatch(setChats(chats)),
     setActiveChat: id => dispatch(setActiveChat(id))
 });
