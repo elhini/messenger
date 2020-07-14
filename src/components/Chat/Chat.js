@@ -37,8 +37,14 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         li.scrollIntoView && li.scrollIntoView();
     });
 
+    function canRead(msg){
+        var chatIDs = chats.map(c => c._id);
+        return chatIDs.includes(msg.chatID);
+    }
+
     useEffect(() => {
         socket.on('new-message', (newMessage) => {
+            if (!canRead(newMessage)) return; // TODO: move it to server
             _setMessage([...messagesByChat, newMessage]);
         });
         return () => {
@@ -47,8 +53,9 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     });
 
     useEffect(() => {
-        socket.on('del-message', (id) => {
-            var messagesFiltered = messagesByChat.filter(m => m._id !== id);
+        socket.on('del-message', (delMessage) => {
+            if (!canRead(delMessage)) return; // TODO: move it to server
+            var messagesFiltered = messagesByChat.filter(m => m._id !== delMessage._id);
             _setMessage(messagesFiltered);
         });
         return () => {
@@ -78,12 +85,12 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         });
     }
   
-    function onDelete(e, id) {
+    function onDelete(e, msg) {
         e.preventDefault();
         setStatus('deleting');
-        req('DELETE', 'messages/' + id, null, res => {
+        req('DELETE', 'messages/' + msg._id, null, res => {
             setStatus('');
-            socket.emit('del-message', id);
+            socket.emit('del-message', msg);
         });
     }
 
@@ -96,7 +103,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             <ul className="messages">
                 {messagesByChat.map(m => 
                     <li className={'message ' + (m.user === user.login ? 'own' : '')} key={m._id}>
-                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m._id)} disabled={isDeleting}>x</button> : null}
+                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m)} disabled={isDeleting}>x</button> : null}
                         <span className="date">[{toStr(m.date)}]</span>
                         <br /> 
                         {m.text}
