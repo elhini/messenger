@@ -122,6 +122,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
   
     function onDelete(e, delMessage) {
         e.preventDefault();
+        if (!window.confirm('Delete this message?')) return;
         setStatus('deleting');
         req('DELETE', 'messages/' + delMessage._id, null, res => {
             setStatus('');
