@@ -29,10 +29,17 @@
             float: right;
             margin: 0 0 5px 5px;
             border: 0;
+            outline: 0;
+            padding: 0;
+            opacity: 0;
             background: none;
+            font-size: 16px;
+        }
+        &:hover button {
+            opacity: 0.5;
         }
         button:hover {
-            background: #eee;
+            opacity: 1;
             cursor: pointer;
         }
         

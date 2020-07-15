@@ -4,6 +4,8 @@ import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import io from 'socket.io-client';
+import { BsTrash } from 'react-icons/bs';
+import { BsPencil } from 'react-icons/bs';
 import './Chat.scss'; 
 
 const socket = io('http://localhost:8000');
@@ -143,8 +145,8 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             <ul className="messages">
                 {messagesByChat.map(m => 
                     <li className={'message ' + (m.user === user.login ? 'own' : '')} key={m._id}>
-                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m)} disabled={isDeleting}>x</button> : null}
-                        {m.user === user.login ? <button className="update" onClick={e => onUpdate(e, m)} disabled={isUpdating}>e</button> : null}
+                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m)} disabled={isDeleting}><BsTrash /></button> : null}
+                        {m.user === user.login ? <button className="update" onClick={e => onUpdate(e, m)} disabled={isUpdating}><BsPencil /></button> : null}
                         <span className="date">[{toStr(m.date)}] {m.updateDate && 'updated'}</span>
                         <br /> 
                         {m.text}

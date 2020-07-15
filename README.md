@@ -14,6 +14,7 @@ DONE:
 + login/auth form
 + store logged user in cookie
 + refactor ids from interger to string
++ update message
 
 TODO:
 - filter messages on socket server
