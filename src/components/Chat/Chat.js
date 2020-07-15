@@ -12,6 +12,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
+    const [msgToUpdate, setMsgToUpdate] = useState(null);
     const messageToScrollRef = useRef(null);
 
     useEffect(() => {
@@ -50,6 +51,18 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     });
 
     useEffect(() => {
+        socket.on('upd-message', (updMessage) => {
+            if (!canRead(updMessage)) return; // TODO: move it to server
+            var messagesUpdated = messagesByChat.map(m => m._id === updMessage._id ? updMessage : m);
+            _setMessage(messagesUpdated);
+            _updateChat(updMessage, false, true);
+        });
+        return () => {
+            socket.off('upd-message');
+        };
+    });
+
+    useEffect(() => {
         socket.on('del-message', (delMessage) => {
             if (!canRead(delMessage)) return; // TODO: move it to server
             var messagesFiltered = messagesByChat.filter(m => m._id !== delMessage._id);
@@ -60,19 +73,6 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
             socket.off('del-message');
         };
     });
-  
-    function onSend(e, text) {
-        e.preventDefault();
-        let newMessage = {chatID: activeChatID, user: user.login, text: text, date: (new Date()).toISOString()};
-        setStatus('sending');
-        req('POST', 'messages', newMessage, res => {
-            setStatus('');
-            newMessage = res;
-            _updateChat(newMessage, false);
-            socket.emit('new-message', newMessage);
-            setText(''); 
-        });
-    }
 
     function _updateChat(msg, isDeleted, noRequest) {
         var newMessages = isDeleted ? messagesByChat.filter(m => m._id !== msg._id) : [...messagesByChat, msg];
@@ -92,6 +92,32 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         }
     }
   
+    function onSend(e) {
+        e.preventDefault();
+        let newMessage = {chatID: activeChatID, user: user.login, text: text, date: (new Date()).toISOString()};
+        setStatus('sending');
+        req('POST', 'messages', newMessage, res => {
+            setStatus('');
+            newMessage = res;
+            _updateChat(newMessage, false);
+            socket.emit('new-message', newMessage);
+            setText(''); 
+        });
+    }
+  
+    function onUpdateFinished(e) {
+        e.preventDefault();
+        msgToUpdate.text = text;
+        msgToUpdate.updateDate = (new Date()).toISOString();
+        setStatus('updating');
+        req('PUT', 'messages/' + msgToUpdate._id, msgToUpdate, res => {
+            setStatus('');
+            _updateChat(msgToUpdate, false);
+            socket.emit('upd-message', msgToUpdate);
+            setText(''); 
+        });
+    }
+  
     function onDelete(e, delMessage) {
         e.preventDefault();
         setStatus('deleting');
@@ -102,8 +128,14 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         });
     }
 
+    function onUpdate(e, msg) {
+        setMsgToUpdate(msg);
+        setText(msg.text);
+    }
+
     var isLoading = status === 'loading';
     var isSending = status === 'sending';
+    var isUpdating = status === 'updating';
     var isDeleting = status === 'deleting';
     return <div className="Chat">
         {isLoading ? <p>Loading messages...</p> : (!messagesByChat.length ? <p>No messages found</p> : null)}
@@ -112,7 +144,8 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
                 {messagesByChat.map(m => 
                     <li className={'message ' + (m.user === user.login ? 'own' : '')} key={m._id}>
                         {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m)} disabled={isDeleting}>x</button> : null}
-                        <span className="date">[{toStr(m.date)}]</span>
+                        {m.user === user.login ? <button className="update" onClick={e => onUpdate(e, m)} disabled={isUpdating}>e</button> : null}
+                        <span className="date">[{toStr(m.date)}] {m.updateDate && 'updated'}</span>
                         <br /> 
                         {m.text}
                     </li>
@@ -120,7 +153,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
                 <li className="messageToScroll" ref={messageToScrollRef}></li>
             </ul>
         </div>
-        <form className="newMessageForm" onSubmit={e => onSend(e, text)}>
+        <form className="newMessageForm" onSubmit={e => msgToUpdate ? onUpdateFinished(e) : onSend(e)}>
             <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} placeholder="Write a message..." />
             <button className="newMessageBtn" disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
         </form>

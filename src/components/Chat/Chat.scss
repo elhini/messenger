@@ -25,13 +25,13 @@
         margin-bottom: 5px;
         background: #eee;
     
-        .delete {
+        button {
             float: right;
             margin: 0 0 5px 5px;
             border: 0;
             background: none;
         }
-        .delete:hover {
+        button:hover {
             background: #eee;
             cursor: pointer;
         }

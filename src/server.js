@@ -27,7 +27,7 @@ MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) =>
   io.on('connection', (socket) => {
     console.log('user connected');
 
-    var events = ['new-message', 'del-message'];
+    var events = ['new-message', 'upd-message', 'del-message'];
     events.forEach(event => {
       socket.on(event, (msg) => {
         console.log(event, msg);
