@@ -25,18 +25,23 @@ MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) =>
 
   var io = require('socket.io').listen(server);
   io.on('connection', (socket) => {
-    console.log('user connected');
+    console.log('socket with id ' + socket.id + ' connected');
+
+    socket.on('join-chats', (user, chatIDs) => {
+      console.log('join-chats', user, chatIDs);
+      chatIDs.forEach(chatID => socket.join(chatID));
+    });
 
     var events = ['new-message', 'upd-message', 'del-message'];
     events.forEach(event => {
       socket.on(event, (msg) => {
-        console.log(event, msg);
-        io.emit(event, msg);
+        console.log(event, msg.user, msg.text);
+        io.in(msg.chatID).emit(event, msg);
       });
     });
 
     socket.on('disconnect', () => {
-      console.log('user disconnected');
+      console.log('socket with id ' + socket.id + ' disconnected');
     });
   });
 });

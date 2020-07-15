@@ -18,6 +18,12 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     const messageToScrollRef = useRef(null);
 
     useEffect(() => {
+        if (!chats.length) return;
+        const chatIDs = chats.map(c => c._id);
+        socket.emit('join-chats', user, chatIDs);
+    }, [user, chats]);
+
+    useEffect(() => {
         if (activeChatID < 0 || messages[activeChatID]) return;
         setStatus('loading');
         req('GET', 'messages/by-chat/' + activeChatID, null, res => {
@@ -36,14 +42,8 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         li.scrollIntoView && li.scrollIntoView();
     });
 
-    function canRead(msg){
-        var chatIDs = chats.map(c => c._id);
-        return chatIDs.includes(msg.chatID);
-    }
-
     useEffect(() => {
         socket.on('new-message', (newMessage) => {
-            if (!canRead(newMessage)) return; // TODO: move it to server
             _setMessage([...messagesByChat, newMessage]);
             _updateChat(newMessage, false, true);
         });
@@ -54,7 +54,6 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
 
     useEffect(() => {
         socket.on('upd-message', (updMessage) => {
-            if (!canRead(updMessage)) return; // TODO: move it to server
             var messagesUpdated = messagesByChat.map(m => m._id === updMessage._id ? updMessage : m);
             _setMessage(messagesUpdated);
             _updateChat(updMessage, false, true);
@@ -66,7 +65,6 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
 
     useEffect(() => {
         socket.on('del-message', (delMessage) => {
-            if (!canRead(delMessage)) return; // TODO: move it to server
             var messagesFiltered = messagesByChat.filter(m => m._id !== delMessage._id);
             _setMessage(messagesFiltered);
             _updateChat(delMessage, true, true);
