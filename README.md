@@ -18,4 +18,5 @@ DONE:
 + filter messages on socket server
 
 TODO:
+- notify about new chat
 - panels resize

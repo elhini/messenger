@@ -16,13 +16,13 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     const [status, setStatus] = useState('');
     const [msgToUpdate, setMsgToUpdate] = useState(null);
     const messageToScrollRef = useRef(null);
+    const chatIDs = chats.map(c => c._id);
 
     useEffect(() => {
-        if (!chats.length) return;
-        const chatIDs = chats.map(c => c._id);
+        if (!chatIDs.length) return;
         socket.emit('join-chats', user, chatIDs);
         return () => socket.emit('leave-chats', user, chatIDs);
-    }, [user, chats]);
+    }, [user, chatIDs.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (activeChatID < 0 || messages[activeChatID]) return;
