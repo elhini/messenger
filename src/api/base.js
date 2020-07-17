@@ -4,7 +4,7 @@ class APIBase {
         this.path = '/api/' + collection;
         this.methods = {
             'get': (req, res, next, query = {}, dontSendResp = false) => {
-                console.log('get', collection, 'query', query);
+                console.log('get', collection, 'with query', query);
                 return new Promise((resolve, reject) => {
                     db.collection(collection).find(query).toArray((err, result) => {
                         if (err) {
@@ -35,7 +35,7 @@ class APIBase {
             },
             'get /:id': (req, res) => {
                 var query = { _id: ObjectID(req.params.id) };
-                console.log('get /:id', collection, 'query', query);
+                console.log('get /:id', collection, 'with query', query);
                 db.collection(collection).findOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });
@@ -46,7 +46,7 @@ class APIBase {
             },
             'put /:id': (req, res) => {
                 var query = { _id: ObjectID(req.params.id) };
-                console.log('put /:id', collection, 'query', query);
+                console.log('put /:id', collection, 'with query', query);
                 const obj = req.body;
                 let _obj = {...obj};
                 delete _obj._id;
@@ -60,7 +60,7 @@ class APIBase {
             },
             'delete /:id': (req, res) => {
                 var query = { _id: ObjectID(req.params.id) };
-                console.log('delete /:id', collection, 'query', query);
+                console.log('delete /:id', collection, 'with query', query);
                 db.collection(collection).deleteOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });

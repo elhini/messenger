@@ -21,6 +21,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
         if (!chats.length) return;
         const chatIDs = chats.map(c => c._id);
         socket.emit('join-chats', user, chatIDs);
+        return () => socket.emit('leave-chats', user, chatIDs);
     }, [user, chats]);
 
     useEffect(() => {

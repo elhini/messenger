@@ -15,7 +15,7 @@ DONE:
 + store logged user in cookie
 + refactor ids from interger to string
 + update message
++ filter messages on socket server
 
 TODO:
-- filter messages on socket server
 - panels resize
