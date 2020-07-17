@@ -35,7 +35,7 @@ MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) =>
     var events = ['new-message', 'upd-message', 'del-message'];
     events.forEach(event => {
       socket.on(event, (msg) => {
-        console.log(event, 'for user', msg.user, 'with text', msg.text);
+        console.log(event, 'from user', [msg.user], 'with text', [msg.text], 'for chat', [msg.chatID]);
         io.in(msg.chatID).emit(event, msg);
       });
     });
