@@ -73,7 +73,6 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     function setMessageAndUpdateChat(event, msg) {
         var chatID = msg.chatID;
         var msgsByChat = messages[chatID];
-        console.log('msgsByChat', msgsByChat);
         var newMessages = [];
         if (msgsByChat) {
             if (event === 'new-message') {
@@ -92,19 +91,24 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
                 newMessages = [msg];
             }
         }
-        _updateChat(newMessages, chatID);
+        _updateChat(newMessages, chatID, msg.user === user.login);
     }
 
-    function _updateChat(newMessages, chatID) {
+    function _updateChat(newMessages, chatID, isAuthor) {
         var lastMessage = newMessages.slice(-1)[0];
         const chat = chats.find(c => c._id === chatID);
         if (!lastMessage || !chat) return;
         chat.lastMessageUser = lastMessage.user;
         chat.lastMessageText = lastMessage.text;
         chat.lastMessageDate = lastMessage.date;
-        req('PUT', 'chats/' + chat._id, chat, res => {
-            updateChat(res);
-        });
+        if (isAuthor) {
+            req('PUT', 'chats/' + chat._id, chat, res => {
+                updateChat(chat);
+            });
+        }
+        else {
+            updateChat(chat);
+        }
     }
   
     function onSend(e) {
