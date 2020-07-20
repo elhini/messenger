@@ -113,6 +113,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
   
     function onSend(e) {
         e.preventDefault();
+        if (!text) return;
         let newMessage = {chatID: activeChatID, user: user.login, text: text, date: (new Date()).toISOString()};
         setStatus('sending');
         req('POST', 'messages', newMessage, res => {
@@ -125,6 +126,7 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
   
     function onUpdateFinished(e) {
         e.preventDefault();
+        if (!text) return;
         msgToUpdate.text = text;
         msgToUpdate.updateDate = (new Date()).toISOString();
         setStatus('updating');
