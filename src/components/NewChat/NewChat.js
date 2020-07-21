@@ -4,7 +4,7 @@ import { setChats, setActiveChat } from '../../actions';
 import { req } from '../../utils/async';
 import './NewChat.scss'; 
 
-function NewChat({ search, user, chats, setChats, setActiveChat }) {
+function NewChat({ socket, search, user, chats, setChats, setActiveChat }) {
     const [foundUsers, setFoundUsers] = useState([]);
     const [activeUser, setActiveUser] = useState({});
     const [status, setStatus] = useState('');
@@ -31,6 +31,7 @@ function NewChat({ search, user, chats, setChats, setActiveChat }) {
             setStatus('');
             setChats([...chats, res]);
             setActiveChat(res._id);
+            socket.emit('new-chat', user, res);
         });
     }
 
