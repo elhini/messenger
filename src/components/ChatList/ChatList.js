@@ -30,6 +30,11 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
     }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
+        socket.emit('connect-user', user);
+        return () => socket.emit('disconnect-user', user);
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
         if (!chatIDs.length) return;
         socket.emit('join-chats', user, chatIDs);
         return () => socket.emit('leave-chats', user, chatIDs);
