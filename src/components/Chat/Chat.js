@@ -3,26 +3,16 @@ import { connect } from 'react-redux';
 import { updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
-import io from 'socket.io-client';
 import { BsTrash } from 'react-icons/bs';
 import { BsPencil } from 'react-icons/bs';
-import './Chat.scss'; 
+import './Chat.scss';
 
-const socket = io('http://localhost:8000');
-
-function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) {
+function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
     const [msgToUpdate, setMsgToUpdate] = useState(null);
     const messageToScrollRef = useRef(null);
-    const chatIDs = chats.map(c => c._id);
-
-    useEffect(() => {
-        if (!chatIDs.length) return;
-        socket.emit('join-chats', user, chatIDs);
-        return () => socket.emit('leave-chats', user, chatIDs);
-    }, [user, chatIDs.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (activeChatID < 0 || messages[activeChatID]) return;
@@ -97,10 +87,10 @@ function Chat({ user, chats, activeChatID, updateChat, messages, setMessages }) 
     function _updateChat(newMessages, chatID, isAuthor) {
         var lastMessage = newMessages.slice(-1)[0];
         const chat = chats.find(c => c._id === chatID);
-        if (!lastMessage || !chat) return;
-        chat.lastMessageUser = lastMessage.user;
-        chat.lastMessageText = lastMessage.text;
-        chat.lastMessageDate = lastMessage.date;
+        if (!chat) return;
+        chat.lastMessageUser = lastMessage ? lastMessage.user : '';
+        chat.lastMessageText = lastMessage ? lastMessage.text : '';
+        chat.lastMessageDate = lastMessage ? lastMessage.date : '';
         if (isAuthor) {
             req('PUT', 'chats/' + chat._id, chat, res => {
                 updateChat(chat);
