@@ -3,9 +3,13 @@ module.exports = (server) => {
     io.on('connection', (socket) => {
         console.log('socket with id', socket.id, 'connected');
 
+        socket.on('connect-user', (user) => {
+            console.log('user', [user.login], 'connected');
+            socket.join(user.login);
+        });
+
         socket.on('join-chats', (user, chatIDs) => {
             console.log('user', [user.login], 'joined chats', chatIDs);
-            socket.join(user.login);
             chatIDs.forEach(chatID => socket.join(chatID));
         });
 
@@ -24,6 +28,11 @@ module.exports = (server) => {
                 console.log(event, 'from user', [msg.user], 'with text', [msg.text], 'for chat', [msg.chatID]);
                 io.in(msg.chatID).emit(event, msg);
             });
+        });
+
+        socket.on('disconnect-user', (user) => {
+            console.log('user', [user.login], 'disconnected');
+            socket.leave(user.login);
         });
 
         socket.on('leave-chats', (user, chatIDs) => {
