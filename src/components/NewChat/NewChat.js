@@ -11,7 +11,7 @@ function NewChat({ socket, search, user, chats, setChats, setActiveChat }) {
     var availUsers = [];
     if (search && foundUsers.length) {
         var oldUserLogins = chats.map(c => c.users.find(u => u !== user.login));
-        availUsers = foundUsers.filter(u => !oldUserLogins.includes(u.login));
+        availUsers = foundUsers.filter(u => !oldUserLogins.includes(u.login) && u.login !== user.login);
     }
 
     useEffect(() => {
