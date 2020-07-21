@@ -16,7 +16,8 @@ DONE:
 + refactor ids from interger to string
 + update message
 + filter messages on socket server
++ notify about new chat
 
 TODO:
-- notify about new chat
 - panels resize
+- readed status
