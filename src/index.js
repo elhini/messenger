@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, } from 'redux';
-import { alerts, users, user, chats, messages } from './reducers'
+import { alerts, users, user, chats, messages } from './reducers';
 import './index.css';
 import App from './App';
 
