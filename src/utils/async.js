@@ -1,4 +1,6 @@
-const apiURL = process.env.API_URL || 'http://localhost:8000';
+var host = window.location.hostname;
+var isRemote = ['shortmsg.vercel.app', 'messenger.elhini.vercel.app'].includes(host);
+var apiURL = isRemote ? 'https://shortmsg.herokuapp.com' : 'http://localhost:8000';
 
 export function req(method, path, data, successCallback, errorCallback = () => {}, finallyCallback) {
     var body = data ? JSON.stringify(data) : null;
