@@ -1,9 +1,11 @@
+const dbURL = process.env.DB_URL || require('./config/db').url;
+if (!dbURL) return console.log('no DB URL provided, server will not be started');
+
 const express        = require('express');
 const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
 const cookieParser   = require('cookie-parser');
 const cors           = require('cors');
-const dbConfig       = require('./config/db');
 const socketServer   = require('./socket-server');
 const app            = express();
 const port           = 8000;
@@ -16,7 +18,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-MongoClient.connect(dbConfig.url, {useUnifiedTopology: true}, (err, dbClient) => {
+MongoClient.connect(dbURL, {useUnifiedTopology: true}, (err, dbClient) => {
   if (err) return console.log(err);
   var db = dbClient && dbClient.db();
   require('./api')(app, db);
