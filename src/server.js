@@ -8,7 +8,7 @@ const cookieParser   = require('cookie-parser');
 const cors           = require('cors');
 const socketServer   = require('./socket-server');
 const app            = express();
-const port           = 8000;
+const port           = process.env.PORT || 8000;
 
 const origins = ['http://localhost:3000', 'https://shortmsg.vercel.app', 'https://messenger.elhini.vercel.app'];
 
