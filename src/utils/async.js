@@ -1,6 +1,8 @@
+const apiURL = process.env.API_URL || 'http://localhost:8000';
+
 export function req(method, path, data, successCallback, errorCallback = () => {}, finallyCallback) {
     var body = data ? JSON.stringify(data) : null;
-    return fetch('http://localhost:8000/api/' + path, {
+    return fetch(apiURL + '/api/' + path, {
         method: method, 
         headers: {'Content-Type': 'application/json'}, 
         credentials: 'include',
