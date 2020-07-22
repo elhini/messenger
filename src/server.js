@@ -10,9 +10,11 @@ const socketServer   = require('./socket-server');
 const app            = express();
 const port           = 8000;
 
+const origins = ['http://localhost:3000', 'https://shortmsg.vercel.app', 'https://messenger.elhini.vercel.app'];
+
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: origins, credentials: true }));
 app.use((err, req, res, next) => {
   console.error(err.stack);
   next(err);
