@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { appendAlert, setUser } from '../../actions';
 import { req } from '../../utils/async';
-import Cookies from 'js-cookie';
 import './Users.scss';
 
 function Users({ appendAlert, user, setUser }) {
@@ -10,6 +9,14 @@ function Users({ appendAlert, user, setUser }) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState('');
+
+    useEffect(() => {
+        if (user.login) return;
+        setStatus('checking');
+        req('GET', 'users/check-auth', null, user => {
+            setUser(user);
+        }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
+    }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
 
     var isRegister = formType === 'register';
   
@@ -27,10 +34,14 @@ function Users({ appendAlert, user, setUser }) {
     }
 
     function clearUser() {
-        setUser({});
-        Cookies.remove('logged-as');
+        setStatus('logging-out');
+        req('POST', 'users/logout', null, res => {
+            setUser({});
+        }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
     }
 
+    var isChecking = status === 'checking';
+    var isLoggingOut = status === 'logging-out';
     var isSending = status === 'sending';
     var btnDefaultText = isRegister ? 'Register' : 'Log in';
     var btnSendingText = isRegister ? 'Registering...' : 'Logging in...';
@@ -38,8 +49,12 @@ function Users({ appendAlert, user, setUser }) {
         {name: 'login', text: 'Log in'},
         {name: 'register', text: 'Register'}
     ];
-    return <div className="Users">
-        {user.login ? <div className="logged-as">Logged as <b>{user.login}</b> <button onClick={clearUser}>Log out</button></div> : 
+    return isChecking ? 'Checking auth...' : 
+    <div className="Users">
+        {user.login ? <div className="logged-as">
+            Logged as <b>{user.login}</b> 
+            <button disabled={isLoggingOut} onClick={clearUser}>{isLoggingOut ? 'Logging out...' : 'Log out'}</button>
+        </div> : 
         <div>{formTypes.map(t => 
             <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
         )}</div>}

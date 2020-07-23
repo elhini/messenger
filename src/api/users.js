@@ -6,7 +6,15 @@ class UsersAPI extends APIBase {
     constructor(app, db) {
         super(db, 'users');
         this.methods = {
-            ...this.methods,
+            'get /check-auth': async (req, res) => {
+                var users = await this.methods['get'](req, res, null, { login: req.cookies['logged-as'] }, true);
+                if (!users[0]) {
+                    return res.send({});
+                }
+                var user = users[0];
+                delete user.password;
+                return res.send(user);
+            },
             'get /search/:query': (req, res) => {
                 const query = { login: { $regex: '.*' + req.params.query + '.*' } };
                 this.methods['get'](req, res, null, query);
@@ -47,7 +55,12 @@ class UsersAPI extends APIBase {
                         res.send({ 'error': 'password is wrong' });
                     }
                 });
-            }
+            },
+            'post /logout': async (req, res) => {
+                res.clearCookie('logged-as');
+                res.send({});
+            },
+            ...this.methods
         };
         this.init(app);
     }
@@ -63,7 +76,7 @@ function getNewExpireDate(){
 }
 
 function setLoggedAsCookie(res, user) {
-    res.cookie('logged-as', user.login, { expires: getNewExpireDate() });
+    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true });
 }
 
 module.exports = UsersAPI;

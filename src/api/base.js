@@ -11,6 +11,7 @@ class APIBase {
                             reject(err);
                             !dontSendResp && res.send({ 'error': err });
                         } else {
+                            // TODO: remove password from users
                             resolve(result);
                             !dontSendResp && res.send(result);
                         }
@@ -40,6 +41,7 @@ class APIBase {
                     if (err) {
                         res.send({ 'error': err });
                     } else {
+                        // TODO: remove password from user
                         res.send(result);
                     }
                 });

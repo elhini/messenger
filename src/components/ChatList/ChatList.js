@@ -24,7 +24,7 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
         setChats([]);
         if (!user.login) return;
         setStatus('loading');
-        req('GET', 'chats/by-user/' + user.login, null, chats => {
+        req('GET', 'chats/my', null, chats => {
             _setChats(chats);
         }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
     }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps

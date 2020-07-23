@@ -4,11 +4,11 @@ class ChatsAPI extends APIBase {
     constructor(app, db) {
         super(db, 'chats');
         this.methods = {
-            ...this.methods,
-            'get /by-user/:login': (req, res) => {
-                const query = { users: req.params.login };
+            'get /my': (req, res) => {
+                const query = { users: req.cookies['logged-as'] };
                 this.methods['get'](req, res, null, query);
-            }
+            },
+            ...this.methods
         };
         this.init(app);
     }
