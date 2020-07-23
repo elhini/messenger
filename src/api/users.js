@@ -22,7 +22,7 @@ class UsersAPI extends APIBase {
                     req.body.registrationDate = new Date();
                     var user = await this.methods['post'](req, res, null, true);
                     delete user.password;
-                    setLoggedAsCookie(res);
+                    setLoggedAsCookie(res, user);
                     return res.send(user);
                 });
             },
@@ -40,7 +40,7 @@ class UsersAPI extends APIBase {
                         req.body.loginDate = new Date();
                         var user = req.body; // TODO: await sessionsAPI['post'](req, res, null, true);
                         delete user.password;
-                        setLoggedAsCookie(res);
+                        setLoggedAsCookie(res, user);
                         return res.send(user);
                     }
                     else {
@@ -62,7 +62,7 @@ function getNewExpireDate(){
     return new Date(now.getTime() + getLifeTime());
 }
 
-function setLoggedAsCookie(res) {
+function setLoggedAsCookie(res, user) {
     res.cookie('logged-as', user.login, { expires: getNewExpireDate() });
 }
 
