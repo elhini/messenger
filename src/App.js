@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
+import { getApiURL } from './utils/url';
 import Alerts from './components/Alerts';
 import Users from './components/Users';
 import ChatList from './components/ChatList';
 import Chat from './components/Chat';
 import './App.scss';
 
-const socket = io('http://localhost:8000');
+const socket = io(getApiURL());
 
 function App({ user }) {
   return (<div>
