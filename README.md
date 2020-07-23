@@ -17,6 +17,8 @@ DONE:
 + update message
 + filter messages on socket server
 + notify about new chat
++ deploy to heroku & vercel
++ set cookie with expires param
 
 TODO:
 - panels resize
