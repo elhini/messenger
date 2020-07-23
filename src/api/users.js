@@ -22,7 +22,7 @@ class UsersAPI extends APIBase {
                     req.body.registrationDate = new Date();
                     var user = await this.methods['post'](req, res, null, true);
                     delete user.password;
-                    res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000 });
+                    res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
                     return res.send(user);
                 });
             },
@@ -40,7 +40,7 @@ class UsersAPI extends APIBase {
                         req.body.loginDate = new Date();
                         var user = req.body; // TODO: await sessionsAPI['post'](req, res, null, true);
                         delete user.password;
-                        res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000 });
+                        res.cookie('logged-as', user.login, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
                         return res.send(user);
                     }
                     else {
