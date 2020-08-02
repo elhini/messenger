@@ -19,7 +19,9 @@ DONE:
 + notify about new chat
 + deploy to heroku & vercel
 + set cookie with expires param
++ notification sound
 
 TODO:
 - panels resize
 - readed status
+- notification in tab title

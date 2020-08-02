@@ -99,7 +99,12 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         }
         else {
             updateChat(chat);
+            playSound();
         }
+    }
+
+    function playSound() {
+        new Audio('/sounds/new-message.mp3').play();
     }
   
     function onSend(e) {
