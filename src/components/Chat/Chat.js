@@ -169,7 +169,7 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
                 <li className="messageToScroll" ref={messageToScrollRef}></li>
             </ul>
         </div>
-        {msgToUpdate ? <div class="msgToUpdate">
+        {msgToUpdate ? <div className="msgToUpdate">
             <button className="cancelUpdate button-at-right" onClick={e => cancelUpdate()}><BsX /></button>
             <label>Edit message:</label>
             {msgToUpdate.text}
