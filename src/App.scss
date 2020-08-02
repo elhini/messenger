@@ -21,3 +21,19 @@ body,
     background: #eee;
   }
 }
+
+.button-at-right {
+  float: right;
+  margin: 0 0 5px 5px;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  opacity: 0.5;
+  background: none;
+  font-size: 16px;
+}
+
+.button-at-right:hover {
+  opacity: 1;
+  cursor: pointer;
+}

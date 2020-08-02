@@ -5,6 +5,7 @@ import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import { BsTrash } from 'react-icons/bs';
 import { BsPencil } from 'react-icons/bs';
+import { BsX } from 'react-icons/bs';
 import './Chat.scss';
 
 function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMessages }) {
@@ -123,6 +124,7 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         req('PUT', 'messages/' + msgToUpdate._id, msgToUpdate, res => {
             setStatus('');
             socket.emit('upd-message', msgToUpdate);
+            setMsgToUpdate(null);
             setText(''); 
         });
     }
@@ -142,6 +144,11 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         setText(msg.text);
     }
 
+    function cancelUpdate() {
+        setMsgToUpdate(null);
+        setText('');
+    }
+
     var isLoading = status === 'loading';
     var isSending = status === 'sending';
     var isUpdating = status === 'updating';
@@ -150,18 +157,23 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         {isLoading ? <p>Loading messages...</p> : (!messagesByChat.length ? <p>No messages found</p> : null)}
         <div className="messagesCont">
             <ul className="messages">
-                {messagesByChat.map(m => 
-                    <li className={'message ' + (m.user === user.login ? 'own' : '')} key={m._id}>
-                        {m.user === user.login ? <button className="delete" onClick={e => onDelete(e, m)} disabled={isDeleting}><BsTrash /></button> : null}
-                        {m.user === user.login ? <button className="update" onClick={e => onUpdate(e, m)} disabled={isUpdating}><BsPencil /></button> : null}
-                        <span className="date">[{toStr(m.date)}] {m.updateDate && 'updated'}</span>
-                        <br /> 
+                {messagesByChat.map(m => {
+                    var isAuthor = m.user === user.login;
+                    return <li className={'message ' + (isAuthor ? 'own' : '')} key={m._id}>
+                        {isAuthor ? <button className="delete button-at-right" onClick={e => onDelete(e, m)} disabled={isDeleting}><BsTrash /></button> : null}
+                        {isAuthor ? <button className="update button-at-right" onClick={e => onUpdate(e, m)} disabled={isUpdating}><BsPencil /></button> : null}
+                        <div className="date">[{toStr(m.date)}] {m.updateDate && 'updated'}</div>
                         {m.text}
                     </li>
-                )}
+                })}
                 <li className="messageToScroll" ref={messageToScrollRef}></li>
             </ul>
         </div>
+        {msgToUpdate ? <div class="msgToUpdate">
+            <button className="cancelUpdate button-at-right" onClick={e => cancelUpdate()}><BsX /></button>
+            <label>Edit message:</label>
+            {msgToUpdate.text}
+        </div> : ''}
         <form className="newMessageForm" onSubmit={e => msgToUpdate ? onUpdateFinished(e) : onSend(e)}>
             <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} placeholder="Write a message..." />
             <button className="newMessageBtn" disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
