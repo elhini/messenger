@@ -20,6 +20,7 @@ DONE:
 + deploy to heroku & vercel
 + set cookie with expires param
 + notification sound
++ original favicon
 
 TODO:
 - panels resize
