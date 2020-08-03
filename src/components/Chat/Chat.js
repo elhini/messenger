@@ -65,9 +65,11 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         var chatID = msg.chatID;
         var msgsByChat = messages[chatID];
         var newMessages = [];
+        var isAuthor = msg.user === user.login;
         if (msgsByChat) {
             if (event === 'new-message') {
                 newMessages = msgsByChat.concat([msg]);
+                !isAuthor && playSound();
             }
             if (event === 'upd-message') {
                 newMessages = msgsByChat.map(m => m._id === msg._id ? msg : m);
@@ -82,7 +84,7 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
                 newMessages = [msg];
             }
         }
-        _updateChat(newMessages, chatID, msg.user === user.login);
+        _updateChat(newMessages, chatID, isAuthor);
     }
 
     function _updateChat(newMessages, chatID, isAuthor) {
@@ -99,12 +101,11 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
         }
         else {
             updateChat(chat);
-            playSound();
         }
     }
 
     function playSound() {
-        new Audio('/sounds/new-message.mp3').play();
+        new Audio('/sounds/new-message.mp3').play().catch(e => console.log('new message'));
     }
   
     function onSend(e) {
