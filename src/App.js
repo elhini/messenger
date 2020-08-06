@@ -11,7 +11,7 @@ import './App.scss';
 const socket = io(getApiURL());
 
 function App({ user }) {
-  return (<div>
+  return (<>
     <Alerts />
     <Users />
     {user.login && <div className="App">
@@ -19,7 +19,7 @@ function App({ user }) {
       <div className="divider"></div>
       <Chat socket={socket} />
     </div>}
-  </div>);
+  </>);
 }
 
 const mapStateToProps = state => ({
