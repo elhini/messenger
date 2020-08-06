@@ -25,6 +25,7 @@ body,
   border: 1px solid #666;
   box-sizing: border-box;
   height: 100%;
+  max-height: 610px; /* 640 - 30 for Users.logged-in */
   display: flex;
 
   .divider {

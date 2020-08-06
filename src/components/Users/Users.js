@@ -49,7 +49,7 @@ function Users({ appendAlert, user, setUser }) {
         {name: 'login', text: 'Log in'},
         {name: 'register', text: 'Register'}
     ];
-    return <div className={'Users' + (user.login ? ' logged' : '')}>
+    return <div className={'Users' + (user.login ? ' logged-in' : '')}>
         {isChecking ? 'Checking auth...' : 
         user.login ? <div className="logged-as">
             Logged as <b>{user.login}</b> 
