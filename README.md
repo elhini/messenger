@@ -27,4 +27,8 @@ DONE:
 TODO:
 - panels resize
 - readed status
+- typing status
+- online status
+- quick edit (arrow up key)
+- quote message
 - notification in tab title
