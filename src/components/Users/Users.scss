@@ -1,7 +1,13 @@
 .Users {
-    margin-bottom: 10px;
+    height: 100%;
     display: flex;
-    min-width: 430px;
+    justify-content: center;
+    align-items: center;
+
+    &.logged {
+        height: auto;
+        margin-bottom: 10px;
+    }
 
     .logged-as {
         display: flex;
@@ -25,11 +31,26 @@
     }
 
     form {
-        display: inline-block;
-
-        input {
-            width: 70px;
+        input[type="text"],
+        input[type="password"] {
+            width: 82px;
             margin-right: 5px;
+        }
+
+        button {
+            min-width: 90px;
+            padding: 1px 2px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .Users {
+        form {
+            span {
+                display: block;
+                margin-bottom: 10px;
+            }
         }
     }
 }

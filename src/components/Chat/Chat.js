@@ -160,12 +160,12 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     var isUpdating = status === 'updating';
     var isDeleting = status === 'deleting';
     var activeChat = chats.find(c => c._id === activeChatID);
-    return <div className="Chat">
+    return <div className={'Chat' + (!activeChat ? ' hidden-on-touch' : '')}>
         {activeChat ? <div className="header">
             <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
             {activeChat.users.filter(u => u !== user.login).join(', ')}
         </div> : ''}
-        {isLoading ? <p>Loading messages...</p> : (activeChatID < 0 ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
+        {isLoading ? <p>Loading messages...</p> : (!activeChat ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
         <div className="messagesCont">
             <ul className="messages">
                 {messagesByChat.map(m => {

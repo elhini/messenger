@@ -10,10 +10,21 @@ body,
   justify-content: center;
 }
 
+#root > div {
+  width: 100%;
+  min-width: 225px;
+  max-width: 640px;
+  height: 100%;
+  min-height: 200px;
+  max-height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
 .App {
   border: 1px solid #666;
-  width: 600px;
-  height: 500px;
+  box-sizing: border-box;
+  height: 100%;
   display: flex;
 
   .divider {
@@ -36,4 +47,17 @@ body,
 .button-at-right:hover {
   opacity: 1;
   cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .App {
+    border-left: 0;
+    border-right: 0;
+  }
+  .hidden-on-touch {
+    display: none;
+  }
+  .divider {
+    display: none;
+  }
 }

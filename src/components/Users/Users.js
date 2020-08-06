@@ -49,19 +49,20 @@ function Users({ appendAlert, user, setUser }) {
         {name: 'login', text: 'Log in'},
         {name: 'register', text: 'Register'}
     ];
-    return isChecking ? 'Checking auth...' : 
-    <div className="Users">
-        {user.login ? <div className="logged-as">
+    return <div className={'Users' + (user.login ? ' logged' : '')}>
+        {isChecking ? 'Checking auth...' : 
+        user.login ? <div className="logged-as">
             Logged as <b>{user.login}</b> 
             <button disabled={isLoggingOut} onClick={clearUser}>{isLoggingOut ? 'Logging out...' : 'Log out'}</button>
         </div> : 
-        <div>{formTypes.map(t => 
-            <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
-        )}</div>}
-        {user.login ? null : 
         <form onSubmit={e => onSend(e)}>
-            <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
+            <span>{formTypes.map(t => 
+                <label key={t.name}><input type="radio" checked={formType === t.name} onChange={e => setFormType(t.name)} /> {t.text}</label>
+            )}</span>
+            <span>
+                <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="login" />
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
+            </span>
             <button disabled={isSending}>{isSending ? btnSendingText : btnDefaultText}</button>
         </form>}
     </div>;

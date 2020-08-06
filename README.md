@@ -22,9 +22,9 @@ DONE:
 + notification sound
 + original favicon
 + chat header with close button
++ touch layout
 
 TODO:
 - panels resize
 - readed status
 - notification in tab title
-- mobile layout

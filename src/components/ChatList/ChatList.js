@@ -74,7 +74,7 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
 
     var isLoading = status === 'loading';
     var isDeleting = status === 'deleting';
-    return <div className="ChatList">
+    return <div className={'ChatList' + (activeChatID < 0 ? '' : ' hidden-on-touch')}>
         <form className="chatSearchForm">
             <input type="text" className="chatSearchInput" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by receiver name" />
         </form>
