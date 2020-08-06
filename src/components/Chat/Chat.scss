@@ -8,6 +8,15 @@
         margin: 5px;
     }
 
+    .header {
+        padding: 5px;
+        border-bottom: 1px solid #666;
+
+        .closeChat {
+            margin-bottom: 0;
+        }
+    }
+
     .messagesCont {
         height: 100%;
         overflow: auto;

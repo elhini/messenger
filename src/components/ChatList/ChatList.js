@@ -55,11 +55,11 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
         return () => socket.off('del-chat');
     }, [user, chats]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (!chatIDs.includes(activeChatID)) {
             setActiveChat(chatIDs.length ? chatIDs[0] : -1);
         }
-    });
+    }); */
   
     function onDelete(e, chat) {
         e.preventDefault();

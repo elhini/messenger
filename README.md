@@ -21,8 +21,10 @@ DONE:
 + set cookie with expires param
 + notification sound
 + original favicon
++ chat header with close button
 
 TODO:
 - panels resize
 - readed status
 - notification in tab title
+- mobile layout

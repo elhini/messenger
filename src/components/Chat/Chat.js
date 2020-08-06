@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { updateChat, setMessages } from '../../actions';
+import { setActiveChat, updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import { BsTrash } from 'react-icons/bs';
@@ -8,7 +8,7 @@ import { BsPencil } from 'react-icons/bs';
 import { BsX } from 'react-icons/bs';
 import './Chat.scss';
 
-function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMessages }) {
+function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
@@ -159,8 +159,13 @@ function Chat({ socket, user, chats, activeChatID, updateChat, messages, setMess
     var isSending = status === 'sending';
     var isUpdating = status === 'updating';
     var isDeleting = status === 'deleting';
+    var activeChat = chats.find(c => c._id === activeChatID);
     return <div className="Chat">
-        {isLoading ? <p>Loading messages...</p> : (!messagesByChat.length ? <p>No messages found</p> : null)}
+        {activeChat ? <div className="header">
+            <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
+            {activeChat.users.filter(u => u !== user.login).join(', ')}
+        </div> : ''}
+        {isLoading ? <p>Loading messages...</p> : (activeChatID < 0 ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
         <div className="messagesCont">
             <ul className="messages">
                 {messagesByChat.map(m => {
@@ -195,6 +200,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    setActiveChat: id => dispatch(setActiveChat(id)),
     updateChat: chat => dispatch(updateChat(chat)),
     setMessages: messages => dispatch(setMessages(messages))
 });
