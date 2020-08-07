@@ -87,8 +87,7 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
                         {!c.lastMessageDate ? <button className="delete" onClick={e => onDelete(e, c)} disabled={isDeleting}>x</button> : null}
                         <span className="user">{c.users.find(u => u !== user.login)}</span>{' '}
                         {c.lastMessageDate && <span className="date">[{toStr(c.lastMessageDate)}]</span>}
-                        <br /> 
-                        {c.lastMessageUser === user.login ? 'You: ' : ''}{c.lastMessageText}
+                        <div className="lastMessageText">{c.lastMessageUser === user.login ? 'You: ' : ''}{c.lastMessageText}</div>
                     </li>
                 )}
             </ul>

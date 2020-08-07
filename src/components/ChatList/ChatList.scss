@@ -43,6 +43,12 @@
         .date {
             color: #aaa;
         }
+
+        .lastMessageText {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
         
     .chat:hover {
