@@ -155,6 +155,16 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
         setText('');
     }
 
+    function onInputKeyDown(e) {
+        if (e.keyCode === 38) { // arrow up
+            var lastMsg = messagesByChat[messagesByChat.length - 1];
+            lastMsg && onUpdate(e, lastMsg);
+        }
+        if (e.keyCode === 27) { // esc
+            cancelUpdate();
+        }
+    }
+
     var isLoading = status === 'loading';
     var isSending = status === 'sending';
     var isUpdating = status === 'updating';
@@ -186,7 +196,8 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
             {msgToUpdate.text}
         </div> : ''}
         <form className="newMessageForm" onSubmit={e => msgToUpdate ? onUpdateFinished(e) : onSend(e)}>
-            <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} placeholder="Write a message..." />
+            <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} onKeyDown={onInputKeyDown}
+                placeholder="Write a message..." />
             <button className="newMessageBtn" disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
         </form>
     </div>;

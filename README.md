@@ -23,12 +23,12 @@ DONE:
 + original favicon
 + chat header with close button
 + touch layout
++ quick edit with arrow up key
 
 TODO:
 - panels resize
 - readed status
 - typing status
 - online status
-- quick edit (arrow up key)
 - quote message
 - notification in tab title
