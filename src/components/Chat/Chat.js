@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { setActiveChat, updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
+import { findFromLast } from '../../utils/array';
 import { BsTrash } from 'react-icons/bs';
 import { BsPencil } from 'react-icons/bs';
 import { BsX } from 'react-icons/bs';
@@ -157,8 +158,8 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
 
     function onInputKeyDown(e) {
         if (e.keyCode === 38) { // arrow up
-            var lastMsg = messagesByChat[messagesByChat.length - 1];
-            lastMsg && onUpdate(e, lastMsg);
+            var myLastMsg = findFromLast(messagesByChat, m => m.user === user.login);
+            myLastMsg && onUpdate(e, myLastMsg);
         }
         if (e.keyCode === 27) { // esc
             cancelUpdate();
