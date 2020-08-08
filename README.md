@@ -24,11 +24,11 @@ DONE:
 + chat header with close button
 + touch layout
 + quick edit with arrow up key
++ typing status
 
 TODO:
 - panels resize
 - readed status
-- typing status
 - online status
 - quote message
 - notification in tab title

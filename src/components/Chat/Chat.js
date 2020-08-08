@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import throttle from 'lodash/throttle';
 import { setActiveChat, updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
@@ -174,7 +174,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
         }
     }
 
-    var sendTypingStatus = useCallback(_.throttle(() => {
+    var sendTypingStatus = useCallback(throttle(() => {
         socket.emit('user-typing', user, activeChatID);
     }, 500), [user, activeChatID]);
 
