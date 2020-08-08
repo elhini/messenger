@@ -36,30 +36,18 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     });
 
     useEffect(() => {
-        socket.on('new-message', msg => {
-            setMessageAndUpdateChat('new-message', msg);
-        });
-        return () => {
-            socket.off('new-message');
-        };
+        socket.on('new-message', msg => setMessageAndUpdateChat('new-message', msg));
+        return () => socket.off('new-message');
     });
 
     useEffect(() => {
-        socket.on('upd-message', msg => {
-            setMessageAndUpdateChat('upd-message', msg);
-        });
-        return () => {
-            socket.off('upd-message');
-        };
+        socket.on('upd-message', msg => setMessageAndUpdateChat('upd-message', msg));
+        return () => socket.off('upd-message');
     });
 
     useEffect(() => {
-        socket.on('del-message', msg => {
-            setMessageAndUpdateChat('del-message', msg);
-        });
-        return () => {
-            socket.off('del-message');
-        };
+        socket.on('del-message', msg => setMessageAndUpdateChat('del-message', msg));
+        return () => socket.off('del-message');
     });
 
     function setMessageAndUpdateChat(event, msg) {
