@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { setActiveChat, updateChat, setMessages } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
@@ -13,6 +14,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
+    const [typingUsers, setTypingUsers] = useState({});
     const [msgToUpdate, setMsgToUpdate] = useState(null);
     const messageToScrollRef = useRef(null);
 
@@ -48,6 +50,11 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     useEffect(() => {
         socket.on('del-message', msg => setMessageAndUpdateChat('del-message', msg));
         return () => socket.off('del-message');
+    });
+
+    useEffect(() => {
+        socket.on('user-typing', setUserTypingStatus);
+        return () => socket.off('user-typing');
     });
 
     function setMessageAndUpdateChat(event, msg) {
@@ -95,6 +102,19 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
 
     function playSound() {
         new Audio('/sounds/new-message.mp3').play().catch(e => console.log('new message'));
+    }
+
+    var userTypingTimeouts = useRef({});
+
+    function setUserTypingStatus(typingUser, chatID) {
+        var login = typingUser.login;
+        if (chatID === activeChatID && login !== user.login) {
+            setTypingUsers({...typingUsers, [login]: true});
+            clearTimeout(userTypingTimeouts.current[login]);
+            userTypingTimeouts.current[login] = setTimeout(() => {
+                setTypingUsers({...typingUsers, [login]: false});
+            }, 500);
+        }
     }
   
     function onSend(e) {
@@ -154,6 +174,10 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
         }
     }
 
+    var sendTypingStatus = useCallback(_.throttle(() => {
+        socket.emit('user-typing', user, activeChatID);
+    }, 500), [user, activeChatID]);
+
     var isLoading = status === 'loading';
     var isSending = status === 'sending';
     var isUpdating = status === 'updating';
@@ -162,7 +186,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     return <div className={'Chat' + (!activeChat ? ' hidden-on-touch' : '')}>
         {activeChat ? <div className="header">
             <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
-            {activeChat.users.filter(u => u !== user.login).join(', ')}
+            {activeChat.users.filter(u => u !== user.login).map(u =>  typingUsers[u] ? u + ' is typing...' : u).join(', ')}
         </div> : ''}
         {isLoading ? <p>Loading messages...</p> : (!activeChat ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
         <div className="messagesCont">
@@ -185,7 +209,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
             {msgToUpdate.text}
         </div> : ''}
         <form className="newMessageForm" onSubmit={e => msgToUpdate ? onUpdateFinished(e) : onSend(e)}>
-            <input type="text" className="newMessageInput" value={text} onChange={e => setText(e.target.value)} onKeyDown={onInputKeyDown}
+            <input type="text" className="newMessageInput" value={text} onChange={e => {setText(e.target.value); sendTypingStatus()}} onKeyDown={onInputKeyDown}
                 placeholder="Write a message..." />
             <button className="newMessageBtn" disabled={isSending}>{isSending ? 'Sending...' : 'Send'}</button>
         </form>
