@@ -30,6 +30,11 @@ module.exports = (server) => {
             });
         });
 
+        socket.on('user-typing', (user, chatID) => {
+            console.log('user', [user.login], 'is typing in chat', [chatID]);
+            io.in(chatID).emit('user-typing', user, chatID);
+        });
+
         socket.on('disconnect-user', (user) => {
             console.log('user', [user.login], 'disconnected');
             socket.leave(user.login);
