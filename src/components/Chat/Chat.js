@@ -15,6 +15,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
     const [typingUsers, setTypingUsers] = useState({});
+    const [joinedUsers, setJoinedUsers] = useState({});
     const [msgToUpdate, setMsgToUpdate] = useState(null);
     const messageToScrollRef = useRef(null);
 
@@ -55,6 +56,16 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     useEffect(() => {
         socket.on('user-typing', setUserTypingStatus);
         return () => socket.off('user-typing');
+    });
+
+    useEffect(() => {
+        socket.on('user-joined-chat', (u, c) => setUserJoinedStatus(u, c, true));
+        return () => socket.off('join-chat');
+    });
+
+    useEffect(() => {
+        socket.on('user-leaved-chat', (u, c) => setUserJoinedStatus(u, c, false));
+        return () => socket.off('leave-chat');
     });
 
     function setMessageAndUpdateChat(event, msg) {
@@ -114,6 +125,13 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
             userTypingTimeouts.current[login] = setTimeout(() => {
                 setTypingUsers({...typingUsers, [login]: false});
             }, 500);
+        }
+    }
+
+    function setUserJoinedStatus(joinedUser, chatID, isOnline) {
+        var login = joinedUser.login;
+        if (chatID === activeChatID && login !== user.login) {
+            setJoinedUsers({...joinedUsers, [login]: isOnline});
         }
     }
   
@@ -186,7 +204,9 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
     return <div className={'Chat' + (!activeChat ? ' hidden-on-touch' : '')}>
         {activeChat ? <div className="header">
             <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
-            {activeChat.users.filter(u => u !== user.login).map(u =>  typingUsers[u] ? u + ' is typing...' : u).join(', ')}
+            {activeChat.users.filter(u => u !== user.login).map(u => {
+                return typingUsers[u] ? u + ' is typing...' : (joinedUsers[u] ? u + ' is online' : u);
+            }).join(', ')}
         </div> : ''}
         {isLoading ? <p>Loading messages...</p> : (!activeChat ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
         <div className="messagesCont">
