@@ -10,7 +10,10 @@ module.exports = (server) => {
 
         socket.on('join-chats', (user, chatIDs) => {
             console.log('user', [user.login], 'joined chats', chatIDs);
-            chatIDs.forEach(chatID => socket.join(chatID));
+            chatIDs.forEach(chatID => {
+                socket.join(chatID);
+                io.in(chatID).emit('user-joined-chat', user, chatID);
+            });
         });
 
         var chatEvents = ['new-chat', 'upd-chat', 'del-chat'];
@@ -42,7 +45,10 @@ module.exports = (server) => {
 
         socket.on('leave-chats', (user, chatIDs) => {
             console.log('user', [user.login], 'leaved chats', chatIDs);
-            chatIDs.forEach(chatID => socket.leave(chatID));
+            chatIDs.forEach(chatID => {
+                socket.leave(chatID);
+                io.in(chatID).emit('user-leaved-chat', user, chatID);
+            });
         });
 
         socket.on('disconnect', () => {
