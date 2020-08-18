@@ -9,7 +9,7 @@ module.exports = (server) => {
         });
 
         socket.on('join-chats', (user, chatIDs) => {
-            console.log('user', [user.login], 'joined chats', chatIDs);
+            console.log('user', [user.login], 'joined', chatIDs.length, 'chats');
             chatIDs.forEach(chatID => {
                 socket.join(chatID);
                 io.in(chatID).emit('user-joined-chat', user, chatID);
@@ -44,7 +44,7 @@ module.exports = (server) => {
         });
 
         socket.on('leave-chats', (user, chatIDs) => {
-            console.log('user', [user.login], 'leaved chats', chatIDs);
+            console.log('user', [user.login], 'leaved', chatIDs.length, 'chats');
             chatIDs.forEach(chatID => {
                 socket.leave(chatID);
                 io.in(chatID).emit('user-leaved-chat', user, chatID);

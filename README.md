@@ -25,10 +25,10 @@ DONE:
 + touch layout
 + quick edit with arrow up key
 + typing status
++ online status
 
 TODO:
 - panels resize
 - readed status
-- online status
 - quote message
 - notification in tab title
