@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { appendAlert, setChats, setActiveChat } from '../../actions';
+import uniq from 'lodash/uniq';
+import { appendAlert, setUsers, setChats, setActiveChat } from '../../actions';
 import { toStr } from '../../utils/date';
 import { req } from '../../utils/async';
 import NewChat from '../NewChat';
 import './ChatList.scss'; 
 
-function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, setActiveChat }) {
+function ChatList({ socket, appendAlert, user, setUsers, chats, setChats, activeChatID, setActiveChat }) {
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('');
     const chatsBySearch = search ? chats.filter(c => {
         var receiver = c.users.find(u => u !== user.login);
         return receiver.toLowerCase().includes(search.toLowerCase());
     }) : chats;
-    const chatIDs = chats.map(c => c._id);
+    const chatIDs = chats.filter(c => c.users.find(u => u === user.login)).map(c => c._id);
 
     function _setChats(chats) {
         const sortedChats = chats.sort((c1, c2) => c2.lastMessageDate > c1.lastMessageDate ? 1 : -1);
@@ -26,26 +27,34 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
         setStatus('loading');
         req('GET', 'chats/my', null, chats => {
             _setChats(chats);
+            loadUsers(chats);
         }, err => appendAlert({ text: err, style: 'error' }), () => setStatus(''));
     }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    function loadUsers(chats) {
+        var logins = uniq(chats.reduce((a, c) => a.concat(c.users), [])).filter(u => u !== user.login);
+        if (!logins.length) return;
+        req('GET', 'users/by-logins/' + logins.join(','), null, users => {
+            setUsers(users);
+        }, err => appendAlert({ text: err, style: 'error' }));
+    }
 
     useEffect(() => {
         socket.emit('connect-user', user);
         return () => socket.emit('disconnect-user', user);
-    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user.login]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (!chatIDs.length) return;
-        socket.emit('join-chats', user, chatIDs);
-        return () => socket.emit('leave-chats', user, chatIDs);
-    }, [user, chatIDs.length]); // eslint-disable-line react-hooks/exhaustive-deps
+        chatIDs.length && socket.emit('join-chats', user, chatIDs);
+        return () => chatIDs.length && socket.emit('leave-chats', user, chatIDs);
+    }, [user.login, chatIDs.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         socket.on('new-chat', (user, chat) => {
             _setChats([...chats, chat]);
         });
         return () => socket.off('new-chat');
-    }, [user, chats]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user.login, chats]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         socket.on('del-chat', (user, chat) => {
@@ -53,13 +62,7 @@ function ChatList({ socket, appendAlert, user, chats, setChats, activeChatID, se
             _setChats(chatsFiltered);
         });
         return () => socket.off('del-chat');
-    }, [user, chats]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    /* useEffect(() => {
-        if (!chatIDs.includes(activeChatID)) {
-            setActiveChat(chatIDs.length ? chatIDs[0] : -1);
-        }
-    }); */
+    }, [user.login, chats]); // eslint-disable-line react-hooks/exhaustive-deps
   
     function onDelete(e, chat) {
         e.preventDefault();
@@ -103,6 +106,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     appendAlert: alert => dispatch(appendAlert(alert)),
+    setUsers: users => dispatch(setUsers(users)),
     setChats: chats => dispatch(setChats(chats)),
     setActiveChat: id => dispatch(setActiveChat(id))
 });
