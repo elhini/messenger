@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import throttle from 'lodash/throttle';
 import { setActiveChat, updateChat, setMessages } from '../../actions';
-import { toStr } from '../../utils/date';
+import { toStr, dateDiff, roundDuration } from '../../utils/date';
 import { req } from '../../utils/async';
 import { findFromLast } from '../../utils/array';
 import { BsTrash } from 'react-icons/bs';
@@ -10,7 +10,7 @@ import { BsPencil } from 'react-icons/bs';
 import { BsX } from 'react-icons/bs';
 import './Chat.scss';
 
-function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, messages, setMessages }) {
+function Chat({ socket, users, user, chats, activeChatID, setActiveChat, updateChat, messages, setMessages }) {
     const messagesByChat = messages[activeChatID] || [];
     const [text, setText] = useState('');
     const [status, setStatus] = useState('');
@@ -194,7 +194,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
 
     var sendTypingStatus = useCallback(throttle(() => {
         socket.emit('user-typing', user, activeChatID);
-    }, 500), [user, activeChatID]);
+    }, 500), [user.login, activeChatID]);
 
     var isLoading = status === 'loading';
     var isSending = status === 'sending';
@@ -205,7 +205,12 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
         {activeChat ? <div className="header">
             <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
             {activeChat.users.filter(u => u !== user.login).map(u => {
-                return typingUsers[u] ? u + ' is typing...' : (joinedUsers[u] ? u + ' is online' : u);
+                var userObject = users.find(uo => uo.login === u) || {};
+                typingUsers[u] && (userObject.lastOnlineDate = new Date());
+                var diff = dateDiff(userObject.lastOnlineDate, new Date());
+                var diffText = diff > 1000 * 5 ? ' was online ' + roundDuration(diff) + ' ago' : '';
+                var joinedStatus = joinedUsers[u] !== undefined ? joinedUsers[u] : userObject.isOnline;
+                return typingUsers[u] ? u + ' is typing...' : (joinedStatus ? u + (diffText || ' is online') : u);
             }).join(', ')}
         </div> : ''}
         {isLoading ? <p>Loading messages...</p> : (!activeChat ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
@@ -238,6 +243,7 @@ function Chat({ socket, user, chats, activeChatID, setActiveChat, updateChat, me
 
 const mapStateToProps = state => ({
     user: state.user,
+    users: state.users.list,
     chats: state.chats.list,
     activeChatID: state.chats.activeID,
     messages: state.messages.list
