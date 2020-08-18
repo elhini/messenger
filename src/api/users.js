@@ -6,49 +6,45 @@ class UsersAPI extends APIBase {
     constructor(app, db) {
         super(db, 'users');
         this.methods = {
-            'get /check-auth': async (req, res) => {
-                var users = await this.methods['get'](req, res, null, { login: req.cookies['logged-as'] }, true);
-                if (!users[0]) {
-                    return res.send({});
-                }
-                var user = users[0];
-                delete user.password;
-                return res.send(user);
+            'get /check-auth': (req, res) => {
+                return res.send(req.user || {}); 
             },
             'get /search/:query': (req, res) => {
                 const query = { login: { $regex: '.*' + req.params.query + '.*' } };
-                this.methods['get'](req, res, null, query);
+                this.getAll(req, res, null, query);
+            },
+            'get /by-logins/:logins': (req, res) => {
+                const query = { login: { $in: req.params.logins.split(',') } };
+                this.getAll(req, res, null, query);
             },
             'post /register': async (req, res) => {
-                var users = await this.methods['get'](req, res, null, {login: req.body.login}, true);
-                if (users[0]) {
+                var user = await this.get(req, res, null, { login: req.body.login }, true);
+                if (user) {
                     return res.send({ 'error': 'user already exists' });
                 }
                 bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
                     if (err) return console.error(err);
                     req.body.password = hash;
                     req.body.registrationDate = new Date();
-                    var user = await this.methods['post'](req, res, null, true);
+                    var user = await this.post(req, res, null, null, true);
                     delete user.password;
-                    setLoggedAsCookie(res, user);
+                    setLoggedAsCookie(res, user); // TODO: move to base
                     return res.send(user);
                 });
             },
             'post /login': async (req, res) => {
-                var users = await this.methods['get'](req, res, null, {login: req.body.login}, true);
-                if (!users[0]) {
+                var user = await this.get(req, res, null, { login: req.body.login }, true);
+                if (!user) {
                     return res.send({ 'error': 'user not exists' });
                 }
-                if (!users[0].password) {
+                if (!user.password) {
                     return res.send({ 'error': 'user does not have password' });
                 }
-                bcrypt.compare(req.body.password, users[0].password, async (err, match) => {
+                bcrypt.compare(req.body.password, user.password, async (err, match) => {
                     if (err) return console.error(err);
                     if (match) {
-                        req.body.loginDate = new Date();
-                        var user = req.body; // TODO: await sessionsAPI['post'](req, res, null, true);
                         delete user.password;
-                        setLoggedAsCookie(res, user);
+                        setLoggedAsCookie(res, user); // TODO: move to base
                         return res.send(user);
                     }
                     else {
@@ -56,7 +52,7 @@ class UsersAPI extends APIBase {
                     }
                 });
             },
-            'post /logout': async (req, res) => {
+            'post /logout': (req, res) => {
                 res.clearCookie('logged-as');
                 res.send({});
             },

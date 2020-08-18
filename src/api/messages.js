@@ -1,14 +1,14 @@
 var APIBase = require('./base');
 
 class MessagesAPI extends APIBase {
-    constructor(app, db) {
-        super(db, 'messages');
+    constructor(app, db, usersAPI) {
+        super(db, 'messages', usersAPI);
         this.methods = {
-            ...this.methods,
             'get /by-chat/:chatID': (req, res) => {
                 const query = { chatID: req.params.chatID };
-                this.methods['get'](req, res, null, query);
-            }
+                this.getAll(req, res, null, query);
+            },
+            ...this.methods
         };
         this.init(app);
     }

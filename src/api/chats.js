@@ -1,12 +1,12 @@
 var APIBase = require('./base');
 
 class ChatsAPI extends APIBase {
-    constructor(app, db) {
-        super(db, 'chats');
+    constructor(app, db, usersAPI) {
+        super(db, 'chats', usersAPI);
         this.methods = {
             'get /my': (req, res) => {
-                const query = { users: req.cookies['logged-as'] };
-                this.methods['get'](req, res, null, query);
+                const query = { users: req.user.login };
+                this.getAll(req, res, null, query);
             },
             ...this.methods
         };
