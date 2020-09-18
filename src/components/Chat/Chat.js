@@ -192,6 +192,15 @@ function Chat({ socket, users, user, chats, activeChatID, setActiveChat, updateC
         }
     }
 
+    function calcUserStatus(u) {
+        var userObject = users.find(uo => uo.login === u) || {};
+        typingUsers[u] && (userObject.lastOnlineDate = new Date());
+        var diff = dateDiff(userObject.lastOnlineDate, new Date());
+        var diffText = diff > 1000 * 5 ? ' was online ' + roundDuration(diff) + ' ago' : '';
+        var joinedStatus = joinedUsers[u] !== undefined ? joinedUsers[u] : userObject.isOnline;
+        return typingUsers[u] ? u + ' is typing...' : (joinedStatus ? u + (diffText || ' is online') : u);
+    }
+
     var sendTypingStatus = useCallback(throttle(() => {
         socket.emit('user-typing', user, activeChatID);
     }, 500), [user.login, activeChatID]);
@@ -204,14 +213,7 @@ function Chat({ socket, users, user, chats, activeChatID, setActiveChat, updateC
     return <div className={'Chat' + (!activeChat ? ' hidden-on-touch' : '')}>
         {activeChat ? <div className="header">
             <button className="closeChat button-at-right" onClick={e => setActiveChat(-1)}><BsX /></button>
-            {activeChat.users.filter(u => u !== user.login).map(u => {
-                var userObject = users.find(uo => uo.login === u) || {};
-                typingUsers[u] && (userObject.lastOnlineDate = new Date());
-                var diff = dateDiff(userObject.lastOnlineDate, new Date());
-                var diffText = diff > 1000 * 5 ? ' was online ' + roundDuration(diff) + ' ago' : '';
-                var joinedStatus = joinedUsers[u] !== undefined ? joinedUsers[u] : userObject.isOnline;
-                return typingUsers[u] ? u + ' is typing...' : (joinedStatus ? u + (diffText || ' is online') : u);
-            }).join(', ')}
+            {activeChat.users.filter(u => u !== user.login).map(calcUserStatus).join(', ')}
         </div> : ''}
         {isLoading ? <p>Loading messages...</p> : (!activeChat ? <p>No chat selected</p> : (!messagesByChat.length ? <p>No messages found</p> : null))}
         <div className="messagesCont">

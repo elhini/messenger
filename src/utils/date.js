@@ -14,15 +14,19 @@ export function dateDiff(date1, date2) {
 
 export function roundDuration(durationMs) {
     if (durationMs > 1000 * 60 * 60 * 24) {
-        return Math.round(durationMs / 1000 / 60 / 60 / 24) + ' day';
+        return formatWithUnit(Math.round(durationMs / 1000 / 60 / 60 / 24), 'day');
     }
     if (durationMs > 1000 * 60 * 60) {
-        return Math.round(durationMs / 1000 / 60 / 60) + ' hr';
+        return formatWithUnit(Math.round(durationMs / 1000 / 60 / 60), 'hr');
     }
     if (durationMs > 1000 * 60) {
-        return Math.round(durationMs / 1000 / 60) + ' min';
+        return formatWithUnit(Math.round(durationMs / 1000 / 60), 'min');
     }
     if (durationMs > 1000) {
-        return Math.round(durationMs / 1000) + ' sec';
+        return formatWithUnit(Math.round(durationMs / 1000), 'sec');
     }
+}
+
+export function formatWithUnit(number, unit) {
+    return number + ' ' + unit + (number > 1 ? 's' : '');
 }

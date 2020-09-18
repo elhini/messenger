@@ -29,6 +29,7 @@ DONE:
 
 TODO:
 - panels resize
-- readed status
+- readed status on message
+- unreaded status on chat
 - quote message
 - notification in tab title
