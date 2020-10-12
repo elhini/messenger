@@ -72,7 +72,7 @@ function getNewExpireDate(){
 }
 
 function setLoggedAsCookie(res, user) {
-    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true });
+    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true, secure: true, sameSite: 'none' });
 }
 
 module.exports = UsersAPI;
