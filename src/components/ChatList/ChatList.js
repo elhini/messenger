@@ -75,6 +75,11 @@ function ChatList({ socket, appendAlert, user, setUsers, chats, setChats, active
         });
     }
 
+    function onClick(c) {
+        c.newMessagesCount = 0;
+        setActiveChat(c._id);
+    }
+
     var isLoading = status === 'loading';
     var isDeleting = status === 'deleting';
     return <div className={'ChatList' + (activeChatID < 0 ? '' : ' hidden-on-touch')}>
@@ -86,8 +91,9 @@ function ChatList({ socket, appendAlert, user, setUsers, chats, setChats, active
         <div className="chatsCont">
             <ul className="chats">
                 {chatsBySearch.map(c => 
-                    <li className={'chat ' + (c._id === activeChatID ? 'active' : '')} key={c._id} onClick={e => setActiveChat(c._id)}>
-                        {!c.lastMessageDate ? <button className="delete" onClick={e => onDelete(e, c)} disabled={isDeleting}>x</button> : null}
+                    <li className={'chat ' + (c._id === activeChatID ? 'active' : '')} key={c._id} onClick={e => onClick(c)}>
+                        {c.newMessagesCount ? <span className="newMessagesCount">{c.newMessagesCount}</span> : null}
+                        {!c.messagesCount ? <button className="delete" onClick={e => onDelete(e, c)} disabled={isDeleting}>x</button> : null}
                         <span className="user">{c.users.find(u => u !== user.login)}</span>{' '}
                         {c.lastMessageDate && <span className="date">[{toStr(c.lastMessageDate)}]</span>}
                         <div className="lastMessageText">{c.lastMessageUser === user.login ? 'You: ' : ''}{c.lastMessageText}</div>

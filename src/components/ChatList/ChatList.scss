@@ -25,6 +25,17 @@
         background: #eee;
         cursor: pointer;
 
+        .newMessagesCount {
+            float: right;
+            text-align: center;
+            font-size: 15px;
+            min-width: 20px;
+            line-height: 20px;
+            border-radius: 50%;
+            color: #fff;
+            background: #06d755;
+        }
+
         .delete {
             float: right;
             margin: 0 0 5px 5px;

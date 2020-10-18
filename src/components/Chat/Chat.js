@@ -91,13 +91,17 @@ function Chat({ socket, users, user, chats, activeChatID, setActiveChat, updateC
                 newMessages = [msg];
             }
         }
-        _updateChat(newMessages, chatID, isAuthor);
+        _updateChat(newMessages, chatID, isAuthor, event);
     }
 
-    function _updateChat(newMessages, chatID, isAuthor) {
+    function _updateChat(newMessages, chatID, isAuthor, event) {
         var lastMessage = newMessages.slice(-1)[0];
         const chat = chats.find(c => c._id === chatID);
         if (!chat) return;
+        updateCount(chat, 'messagesCount', event);
+        if (!lastMessage && !isAuthor && chat.messagesCount) {
+            // TODO: load chats & set lastMessage from DB
+        }
         chat.lastMessageUser = lastMessage ? lastMessage.user : '';
         chat.lastMessageText = lastMessage ? lastMessage.text : '';
         chat.lastMessageDate = lastMessage ? lastMessage.date : '';
@@ -107,7 +111,18 @@ function Chat({ socket, users, user, chats, activeChatID, setActiveChat, updateC
             });
         }
         else {
+            updateCount(chat, 'newMessagesCount', event);
             updateChat(chat);
+        }
+    }
+
+    function updateCount(chat, field, event) {
+        const count = chat[field] || 0;
+        if (event === 'new-message') {
+            chat[field] = count + 1;
+        }
+        if (event === 'del-message') {
+            chat[field] = Math.max(count - 1, 0);
         }
     }
 
