@@ -72,7 +72,8 @@ function getNewExpireDate(){
 }
 
 function setLoggedAsCookie(req, res, user) {
-    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true, secure: req.secure, sameSite: req.secure ? 'none' : 'Lax' });
+    var isSecure = req.secure || req.get('x-forwarded-proto') === 'https'; // req.secure is false on heroku server
+    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true, secure: isSecure, sameSite: isSecure ? 'none' : 'Lax' });
 }
 
 module.exports = UsersAPI;
