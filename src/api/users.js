@@ -53,7 +53,7 @@ class UsersAPI extends APIBase {
                 });
             },
             'post /logout': (req, res) => {
-                res.clearCookie('logged-as', {path: '/'});
+                clearLoggedAsCookie(req, res);
                 res.send({});
             },
             ...this.methods
@@ -71,9 +71,17 @@ function getNewExpireDate(){
     return new Date(now.getTime() + getLifeTime());
 }
 
-function setLoggedAsCookie(req, res, user) {
+function getCookieOptions(req){
     var isSecure = req.secure || req.get('x-forwarded-proto') === 'https'; // req.secure is false on heroku server
-    res.cookie('logged-as', user.login, { expires: getNewExpireDate(), httpOnly: true, secure: isSecure, sameSite: isSecure ? 'none' : 'Lax' });
+    return { path: '/', httpOnly: true, secure: isSecure, sameSite: isSecure ? 'none' : 'Lax' };
+}
+
+function setLoggedAsCookie(req, res, user) {
+    res.cookie('logged-as', user.login, Object.assign(getCookieOptions(req), { expires: getNewExpireDate() }));
+}
+
+function clearLoggedAsCookie(req, res) {
+    res.clearCookie('logged-as', getCookieOptions(req));
 }
 
 module.exports = UsersAPI;
