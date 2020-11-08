@@ -53,7 +53,7 @@ class UsersAPI extends APIBase {
                 });
             },
             'post /logout': (req, res) => {
-                res.clearCookie('logged-as');
+                res.clearCookie('logged-as', {path: '/'});
                 res.send({});
             },
             ...this.methods
