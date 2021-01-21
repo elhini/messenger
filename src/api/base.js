@@ -3,7 +3,7 @@ class APIBase {
     constructor(db, collection, usersAPI) {
         this.db = db;
         this.collection = collection;
-        this.usersAPI = usersAPI;
+        this.usersAPI = usersAPI; // TODO: collection !== 'users' ? new UsersAPI() : this
         this.path = '/api/' + collection;
         this.methods = {
             'get': this.getAll.bind(this),
@@ -48,7 +48,7 @@ class APIBase {
 
     get(req, res, next, query, dontSendResp = false) {
         query = Object.keys(query).length ? query : { _id: ObjectID(req.params.id) };
-        if (this.collection !== 'users') {
+        if (true) {
             console.log('get query', query);
         }
         return new Promise((resolve, reject) => {
@@ -113,8 +113,12 @@ class APIBase {
                 console.log('init', this.path + route, method);
                 app[method](this.path + route, async (req, res, next, query = {}, dontSendResp = false) => {
                     console.log('call', this.path + route, method);
-                    await this.updateUserFromRequest(req, res, method, route);
-                    await this.methods[key](req, res, next, query, dontSendResp);
+                    try {
+                        await this.updateUserFromRequest(req, res, method, route);
+                        await this.methods[key](req, res, next, query, dontSendResp);
+                    } catch (e) {
+                        res.send({ error: 'request failed' });
+                    }
                 });
             }
         }
@@ -125,18 +129,12 @@ class APIBase {
         if (this.collection === 'users' && (isSingleGetOrPut || route === '/register' || route === '/login')) {
             return;
         }
-        var login = req.cookies['logged-as'] || req.body.login;
-        if (login) {
-            // TODO: clean/remove req parameter
-            req.user = await (this.usersAPI || this).get(req, res, null, { login }, true);
-            if (req.user) {
-                delete req.user.password;
-                var isLogout = this.collection === 'users' && route === '/logout';
-                await this.setUserOnlineStatus(req, res, !isLogout);
-            }
-            else {
-                return res.send({ 'error': 'user not exists' });
-            }
+        var user = await (this.usersAPI || this).getBySessionID(req, res);
+        if (user && user.login) {
+            delete user.password;
+            req.user = user;
+            var isLogout = this.collection === 'users' && route === '/logout';
+            await this.setUserOnlineStatus(req, res, !isLogout);
         }
     }
 

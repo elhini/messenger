@@ -3,8 +3,9 @@ var bcrypt = require('bcrypt');
 var saltRounds = 10;
 
 class UsersAPI extends APIBase {
-    constructor(app, db) {
+    constructor(app, db, _, sessionsAPI) {
         super(db, 'users');
+        this.sessionsAPI = sessionsAPI;
         this.methods = {
             'get /check-auth': (req, res) => {
                 return res.send(req.user || {}); 
@@ -28,7 +29,7 @@ class UsersAPI extends APIBase {
                     req.body.registrationDate = new Date();
                     var user = await this.post(req, res, null, null, true);
                     delete user.password;
-                    setLoggedAsCookie(req, res, user); // TODO: move to base
+                    await this.createSession(req, res, user); // TODO: move to base
                     return res.send(user);
                 });
             },
@@ -44,7 +45,7 @@ class UsersAPI extends APIBase {
                     if (err) return console.error(err);
                     if (match) {
                         delete user.password;
-                        setLoggedAsCookie(req, res, user); // TODO: move to base
+                        await this.createSession(req, res, user); // TODO: move to base
                         return res.send(user);
                     }
                     else {
@@ -52,13 +53,46 @@ class UsersAPI extends APIBase {
                     }
                 });
             },
-            'post /logout': (req, res) => {
-                clearLoggedAsCookie(req, res);
+            'post /logout': async (req, res) => {
+                await this.closeSession(req, res);
                 res.send({});
             },
             ...this.methods
         };
         this.init(app);
+    }
+
+    async getBySessionID(req, res) {
+        var id = req.cookies['session-id'];
+        console.log('id', id);
+        if (!id) {
+            return res.send({ /* empty user */ });
+        }
+        var session = await this.sessionsAPI.get({ params: { id } }, res, null, {}, true);
+        console.log('session', session);
+        if (!session) {
+            return res.send({ 'error': 'wrong session id' });
+        }
+        var user = await this.get(req, res, null, { login: session.login }, true);
+        console.log('user', user);
+        if (!user) {
+            return res.send({ 'error': 'user not exists' });
+        }
+        return user;
+    }
+
+    async createSession(req, res, user) {
+        var _req = {...req};
+        _req.body = { login: user.login };
+        var session = await this.sessionsAPI.post(_req, res, null, null, true);
+        setSessionCookie(req, res, session);
+    }
+    
+    async closeSession(req, res) {
+        var _req = {...req};
+        _req.body = { closed: true };
+        var session = await this.sessionsAPI.put(_req, res, null, {_id: req.sessionID}, true);
+        clearSessionCookie(req, res);
     }
 }
 
@@ -76,12 +110,12 @@ function getCookieOptions(req){
     return { path: '/', httpOnly: true, secure: isSecure, sameSite: isSecure ? 'none' : 'Lax' };
 }
 
-function setLoggedAsCookie(req, res, user) {
-    res.cookie('logged-as', user.login, Object.assign(getCookieOptions(req), { expires: getNewExpireDate() }));
+function setSessionCookie(req, res, session) {
+    res.cookie('session-id', session._id.toString(), Object.assign(getCookieOptions(req), { expires: getNewExpireDate() }));
 }
 
-function clearLoggedAsCookie(req, res) {
-    res.clearCookie('logged-as', getCookieOptions(req));
+function clearSessionCookie(req, res) {
+    res.clearCookie('session-id', getCookieOptions(req));
 }
 
 module.exports = UsersAPI;
